@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirestoreModule } from './firestore/firestore.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { FirestoreModule } from './firestore/firestore.module';
         keyFilename: configService.get<string>('SA_KEY'),
       }),
       inject: [ConfigService],
-    })
+    }),
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
