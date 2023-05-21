@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirestoreModule } from './firestore/firestore.module';
+import { RecipesModule } from './recipes/recipes.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -17,7 +18,8 @@ import { UsersModule } from './users/users.module';
       }),
       inject: [ConfigService],
     }),
-    UsersModule
+    RecipesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
