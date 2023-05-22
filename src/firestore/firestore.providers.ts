@@ -1,4 +1,4 @@
-import { Recipe } from "src/recipes/entities/recipes.entity";
+import { Recipe } from "src/recipes/documents/recipes.document";
 
 export const FirestoreDatabaseProvider = 'firestoredb';
 export const FirestoreOptionsProvider = 'firestoreOptions'

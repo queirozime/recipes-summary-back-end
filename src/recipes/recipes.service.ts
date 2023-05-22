@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Recipe } from './entities/recipes.entity';
-import { CollectionReference, DocumentReference, DocumentSnapshot } from '@google-cloud/firestore';
+import { Recipe } from './documents/recipes.document';
+import { CollectionReference, DocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
 
 @Injectable()
 export class RecipesService {
@@ -10,7 +10,7 @@ export class RecipesService {
   ) {}
 
   async findAll(): Promise<Recipe[]>{
-    const snapshot = await this.recipesCollection.get()
+    const snapshot: QuerySnapshot<Recipe> = await this.recipesCollection.get()
     const recipes: Recipe[] = []
     snapshot.forEach(doc => recipes.push(doc.data()))
     return recipes
