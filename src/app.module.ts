@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirestoreModule } from './firestore/firestore.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { UsersModule } from './users/users.module';
+import { ShoplistsModule } from './shoplists/shoplists.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
     }),
     RecipesModule,
     UsersModule,
+    ShoplistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
