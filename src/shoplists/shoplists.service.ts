@@ -3,6 +3,7 @@ import { CreateShoplistDto } from './dto/create-shoplist.dto';
 import { UpdateShoplistDto } from './dto/update-shoplist.dto';
 import { CollectionReference } from '@google-cloud/firestore';
 import { Shoplist } from './documents/shoplist.document';
+import { Ingredient } from './interfaces/ingredient.interface';
 
 @Injectable()
 export class ShoplistsService {
@@ -12,19 +13,32 @@ export class ShoplistsService {
   ) {}
 
   async create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
-    // Acessa um objeto dentro de outro objeto
-    const getNestedObject = (nestedObj: object[], pathArr: any[]) => {
-      return pathArr.reduce(
-        (obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : null),
-        nestedObj
-      );
-    };
-
-    // TODO: Criar método de contagem de ingredients 
+    // TODO: Criar função updateLastAlterationDate() para atualizar a data de alteração da lista
+    // TODO: Reorgazinar a estrutura da função passando alguns métodos para uma classe Shoplist
     const recipes = createShoplistDto.recipes;
-    const ingredients = getNestedObject(recipes, [0, 'ingredients']);
-    console.log(ingredients);
-    return
+    const shoplist: Ingredient[] = [];
+
+    // Cria uma array com os ingredientes de todas as receitas de lista poderados pela porção
+    const arr: Ingredient[] = recipes.reduce((accumulator, { basePortion, portion, ingredients }) => {
+      const arr = ingredients.map((element) => {
+        const weight = portion / basePortion;
+        return {...element, qty: element.qty * weight};
+      });
+      return [...accumulator, ...arr];
+    }, []);
+
+    // Analisa a quantidade de ocorrências de cada ingrediente e soma suas quantidades
+    arr.forEach((element) => {
+      const index = shoplist.findIndex((target) => element.name === target.name && element.unit === target.unit);
+      if (index !== -1) shoplist[index].qty += element.qty;
+      else shoplist.push(element);
+    });
+
+    // Armazena no banco de dados
+    const doc = {...createShoplistDto, ingredients: shoplist};
+    await this.shoplistCollection.add(doc);
+
+    return doc;
   }
 
   findAll() {
