@@ -1,9 +1,9 @@
 import { Timestamp } from "@google-cloud/firestore";
+import { Recipe } from "../interfaces/recipe.interface";
 
 export class CreateShoplistDto {
-  name: string;
+  title: string;
   favorite: boolean;
   lastAlterationDate: Timestamp;
-  weights: number[];
-  recipes: object[];
+  recipes: Recipe[];
 }
