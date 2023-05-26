@@ -3,6 +3,7 @@ import { Ingredient } from "../interfaces/ingredient.interface";
 import { Timestamp } from "@google-cloud/firestore";
 
 export class Shoplist {
+  private id: string;
   private title: string;
   private favorite: boolean;
   private lastAlterationDate: Timestamp;
@@ -18,7 +19,11 @@ export class Shoplist {
     this.setIngredients();
   }
 
-  // Getters
+  // Getters e Setters
+  setId(id: string) {
+    this.id = id;
+  }
+
   getTitle(): string {
     return this.title;
   }
