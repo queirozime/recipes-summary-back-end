@@ -13,6 +13,7 @@ export class ShoplistDocument {
         ingredients: shoplist.getIngredients()
       }
     },
+    //TODO: Alterar método fromFirestore para retornar Recipe[]
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
       const data = snapshot.data();
       return new Shoplist(data.title, data.favorite, []);
