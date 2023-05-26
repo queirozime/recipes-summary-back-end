@@ -1,19 +1,10 @@
-import { Inject, Injectable } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot, Timestamp } from "@google-cloud/firestore";
-import { Ingredient } from "../interfaces/ingredient.interface";
 
-@Injectable()
 export class ShoplistDocument {
   static collectionName = 'Shoplists';
   
-  private title: string;
-  private favorite: boolean;
-  private lastAlterationdate: Timestamp;
-  private ingredients: Ingredient[];
-  // Conversor de tipo para utilização dos métodos de DocumentReference<ShoplistDocument>
-  // TODO: Configurar fromFirebase e descobrir onde pôr isso
-  private shoplistConverter = {
+  private shoplistConverter = { // Conversor de objetos Firebase
     toFirestore(shoplist: Shoplist): DocumentData {
       return {  
         title: shoplist.getTitle(),
@@ -22,19 +13,19 @@ export class ShoplistDocument {
         ingredients: shoplist.getIngredients()
       }
     },
+    //TODO: Alterar método fromFirestore para retornar Recipe[]
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
-      return
+      const data = snapshot.data();
+      return new Shoplist(data.title, data.favorite, []);
     }
   };
 
-  constructor(
-    @Inject(ShoplistDocument.collectionName)
-    private shoplistCollection: CollectionReference<ShoplistDocument>
-  ) {}
+  constructor(private shoplistCollection: CollectionReference<ShoplistDocument>) {}
 
   async create(shoplist: Shoplist): Promise<Shoplist> {
     const doc = this.shoplistCollection.doc();
-    doc.withConverter(this.shoplistConverter).set(shoplist);
+    await doc.withConverter(this.shoplistConverter).set(shoplist);
+    shoplist.setId(doc.id);
     return shoplist;
   }
 }
