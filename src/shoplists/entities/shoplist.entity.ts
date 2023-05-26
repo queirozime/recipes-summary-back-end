@@ -6,17 +6,24 @@ export class Shoplist {
   private id: string;
   private title: string;
   private favorite: boolean;
+  //TODO: Descobrir porque que Timestamp não está sendo retornado no JSON
   private lastAlterationDate: Timestamp;
   private recipes: Recipe[];
   private ingredients: Ingredient[];
 
-  constructor(title: string, favorite: boolean, recipes: Recipe[]) {
+  constructor(
+    title: string, favorite: boolean, recipes: Recipe[], 
+    lastAlterationDate?: Timestamp, ingredients?: Ingredient[]
+  ) {
     this.title = title;
     this.favorite = favorite;
+    this.lastAlterationDate = lastAlterationDate;
     this.recipes = recipes;
-    this.ingredients = [];
-    this.updateLastAlteraionDate();
-    this.setIngredients();
+    this.ingredients = ingredients || [];
+    if(this.id !== undefined) {
+      this.updateLastAlteraionDate();
+      this.setIngredients();
+    }
   }
 
   // Getters e Setters

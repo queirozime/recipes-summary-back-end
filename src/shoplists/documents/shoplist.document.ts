@@ -1,5 +1,5 @@
 import { Shoplist } from "../entities/shoplist.entity";
-import { CollectionReference, DocumentData, QueryDocumentSnapshot, Timestamp } from "@google-cloud/firestore";
+import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 
 export class ShoplistDocument {
   static collectionName = 'Shoplists';
@@ -16,7 +16,7 @@ export class ShoplistDocument {
     //TODO: Alterar método fromFirestore para retornar Recipe[]
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
       const data = snapshot.data();
-      return new Shoplist(data.title, data.favorite, []);
+      return new Shoplist(data.title, data.favorite, [], data.lastAlterationDate, data.ingredients);
     }
   };
 
@@ -26,6 +26,19 @@ export class ShoplistDocument {
     const doc = this.shoplistCollection.doc();
     await doc.withConverter(this.shoplistConverter).set(shoplist);
     shoplist.setId(doc.id);
+    return shoplist;
+  }
+
+  async findAll(): Promise<Shoplist[]> {
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).get();
+    const shoplists: Shoplist[] = [];
+    snapshot.forEach(doc => shoplists.push(doc.data()));
+    return shoplists;
+  }
+
+  async findOne(id: string): Promise<Shoplist> {
+    const doc = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
+    const shoplist = doc.data();
     return shoplist;
   }
 }

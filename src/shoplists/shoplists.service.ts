@@ -15,17 +15,20 @@ export class ShoplistsService {
   async create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
     const shoplist = new Shoplist(createShoplistDto.title, createShoplistDto.favorite, createShoplistDto.recipes);
     const shoplistDocument = new ShoplistDocument(this.shoplistCollection);
-    return await shoplistDocument.create(shoplist);
+    return shoplistDocument.create(shoplist);
   }
 
-  findAll() {
-    return `This action returns all shoplists`;
+  async findAll(): Promise<Shoplist[]> {
+    const shoplistDocument = new ShoplistDocument(this.shoplistCollection); 
+    return shoplistDocument.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shoplist`;
+  async findOne(id: string): Promise<Shoplist> {
+    const shoplistDocument = new ShoplistDocument(this.shoplistCollection); 
+    return shoplistDocument.findOne(id);
   }
 
+  // ? Estritamente necessário com limitação de tempo ?
   update(id: number, updateShoplistDto: UpdateShoplistDto) {
     return `This action updates a #${id} shoplist`;
   }

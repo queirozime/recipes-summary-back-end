@@ -12,14 +12,14 @@ export class ShoplistsController {
     return this.shoplistsService.create(createShoplistDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.shoplistsService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.shoplistsService.findOne(+id);
+    return this.shoplistsService.findOne(id);
   }
 
   @Patch(':id')
