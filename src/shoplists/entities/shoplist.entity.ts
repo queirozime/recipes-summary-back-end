@@ -6,7 +6,6 @@ export class Shoplist {
   private id: string;
   private title: string;
   private favorite: boolean;
-  //TODO: Descobrir porque que Timestamp não está sendo retornado no JSON
   private lastAlterationDate: Timestamp;
   private recipes: Recipe[];
   private ingredients: Ingredient[];
@@ -19,8 +18,7 @@ export class Shoplist {
     this.favorite = favorite;
     this.lastAlterationDate = this.updateLastAlterationDate() || lastAlterationDate;
     this.recipes = recipes;
-    this.ingredients = ingredients || [];
-    if(this.id !== undefined) this.setIngredients();
+    this.ingredients = this.setIngredients() || ingredients;
   }
 
   // Getters e Setters
@@ -53,7 +51,8 @@ export class Shoplist {
     return Timestamp.now();
   }
 
-  private setIngredients() {
+  private setIngredients(): Ingredient[] {
+    const shoplist: Ingredient[] = [];
     // Cria uma array com os ingredientes de todas as receitas de lista poderados pela porção
     const arr: Ingredient[] = this.recipes.reduce((accumulator, { basePortion, portion, ingredients }) => {
       const arr = ingredients.map((element) => {
@@ -62,12 +61,13 @@ export class Shoplist {
       });
       return [...accumulator, ...arr];
     }, []);
-
     // Analisa a quantidade de ocorrências de cada ingrediente e soma suas quantidades
     arr.forEach((element) => {
-      const index = this.ingredients.findIndex((target) => element.name === target.name && element.unit === target.unit);
-      if (index !== -1) this.ingredients[index].qty += element.qty;
-      else this.ingredients.push(element);
+      const index = shoplist.findIndex((target) => element.name === target.name && element.unit === target.unit);
+      if (index !== -1) shoplist[index].qty += element.qty;
+      else shoplist.push(element);
     });
+
+    return shoplist;
   }
 }

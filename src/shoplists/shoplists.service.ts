@@ -26,7 +26,7 @@ export class ShoplistsService {
     return `This action updates a #${id} shoplist`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} shoplist`;
   }
 }
