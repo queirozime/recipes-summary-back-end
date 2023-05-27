@@ -1,6 +1,8 @@
+import { Inject, Injectable } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 
+@Injectable()
 export class ShoplistDocument {
   static collectionName = 'Shoplists';
   
@@ -20,7 +22,10 @@ export class ShoplistDocument {
     }
   };
 
-  constructor(private shoplistCollection: CollectionReference<ShoplistDocument>) {}
+  constructor(
+    @Inject(ShoplistDocument.collectionName)
+    private shoplistCollection: CollectionReference<ShoplistDocument>
+  ) {}
 
   async create(shoplist: Shoplist): Promise<Shoplist> {
     const doc = this.shoplistCollection.doc();
