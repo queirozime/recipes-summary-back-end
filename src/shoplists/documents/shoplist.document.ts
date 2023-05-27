@@ -1,8 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 
-@Injectable()
+@Injectable({scope: Scope.REQUEST})
 export class ShoplistDocument {
   static collectionName = 'Shoplists';
   
@@ -11,7 +11,7 @@ export class ShoplistDocument {
       return {  
         title: shoplist.getTitle(),
         favorite: shoplist.isFavorite(),
-        lastAlterationdate: shoplist.getLastAlterationDate(),
+        lastAlterationDate: shoplist.getLastAlterationDate(),
         ingredients: shoplist.getIngredients()
       }
     },
@@ -28,9 +28,8 @@ export class ShoplistDocument {
   ) {}
 
   async create(shoplist: Shoplist): Promise<Shoplist> {
-    const doc = this.shoplistCollection.doc();
-    await doc.withConverter(this.shoplistConverter).set(shoplist);
-    shoplist.setId(doc.id);
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).add(shoplist);
+    shoplist.setId(snapshot.id);
     return shoplist;
   }
 
@@ -42,9 +41,13 @@ export class ShoplistDocument {
   }
 
   async findOne(id: string): Promise<Shoplist> {
-    const doc = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
-    const shoplist = doc.data();
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
+    const shoplist = snapshot.data();
     return shoplist;
+  }
+
+  async delete(id: string) {
+    await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).delete();
   }
 }
 
