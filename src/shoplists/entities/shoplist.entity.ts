@@ -17,13 +17,10 @@ export class Shoplist {
   ) {
     this.title = title;
     this.favorite = favorite;
-    this.lastAlterationDate = lastAlterationDate;
+    this.lastAlterationDate = this.updateLastAlterationDate() || lastAlterationDate;
     this.recipes = recipes;
     this.ingredients = ingredients || [];
-    if(this.id !== undefined) {
-      this.updateLastAlteraionDate();
-      this.setIngredients();
-    }
+    if(this.id !== undefined) this.setIngredients();
   }
 
   // Getters e Setters
@@ -52,8 +49,8 @@ export class Shoplist {
   }
 
   // Regras de Negócio
-  private updateLastAlteraionDate() {
-    this.lastAlterationDate = Timestamp.now();
+  private updateLastAlterationDate(): Timestamp {
+    return Timestamp.now();
   }
 
   private setIngredients() {
