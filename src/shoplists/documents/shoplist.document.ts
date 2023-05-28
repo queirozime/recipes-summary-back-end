@@ -12,13 +12,22 @@ export class ShoplistDocument {
         title: shoplist.getTitle(),
         favorite: shoplist.isFavorite(),
         lastAlterationDate: shoplist.getLastAlterationDate(),
+        recipes: shoplist.getRecipes(),
         ingredients: shoplist.getIngredients()
       }
     },
     //TODO: Alterar método fromFirestore para retornar Recipe[]
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
       const data = snapshot.data();
-      return new Shoplist(data.title, data.favorite, [], data.lastAlterationDate, data.ingredients);
+      const shoplist = new Shoplist(
+        data.title, 
+        data.favorite, 
+        data.recipes, 
+        data.lastAlterationDate, 
+        data.ingredients
+      );
+      shoplist.setId(snapshot.id);
+      return shoplist;
     }
   };
 

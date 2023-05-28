@@ -16,9 +16,9 @@ export class Shoplist {
   ) {
     this.title = title;
     this.favorite = favorite;
-    this.lastAlterationDate = this.updateLastAlterationDate() || lastAlterationDate;
+    this.lastAlterationDate = lastAlterationDate || this.updateLastAlterationDate();
     this.recipes = recipes;
-    this.ingredients = this.setIngredients() || ingredients;
+    this.ingredients = ingredients || this.setIngredients();
   }
 
   // Getters e Setters
