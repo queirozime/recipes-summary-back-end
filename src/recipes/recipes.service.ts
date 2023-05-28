@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Recipe } from './documents/recipes.document';
 import { CollectionReference, DocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
+import { createRecipeDto } from './dto/create-recipe.dto';
 
 @Injectable()
 export class RecipesService {
