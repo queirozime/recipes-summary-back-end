@@ -8,16 +8,16 @@ import { Shoplist } from './entities/shoplist.entity';
 export class ShoplistsService {
   constructor(private shoplistDocument: ShoplistDocument) {}
 
-  async create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
+  create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
     const shoplist = new Shoplist(createShoplistDto.title, createShoplistDto.favorite, createShoplistDto.recipes);
     return this.shoplistDocument.create(shoplist);
   }
 
-  async findAll(): Promise<Shoplist[]> {
+  findAll(): Promise<Shoplist[]> {
     return this.shoplistDocument.findAll();
   }
 
-  async findOne(id: string): Promise<Shoplist> {
+  findOne(id: string): Promise<Shoplist> {
     return this.shoplistDocument.findOne(id);
   }
 
@@ -27,6 +27,7 @@ export class ShoplistsService {
   }
 
   remove(id: string) {
+    this.shoplistDocument.delete(id);
     return `This action removes a #${id} shoplist`;
   }
 }
