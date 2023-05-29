@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
 import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
-import { ShoplistService } from './shoplists.service';
+import { ShoplistsService } from './shoplists.service';
 
 @Controller('shoplists')
-export class ShoplistController {
-  constructor(private readonly shoplistService: ShoplistService) {}
+export class ShoplistsController {
+  constructor(private readonly shoplistService: ShoplistsService) {}
 
   @Post('create')
   create(@Body() createShoplistDto: CreateShoplistDto) {
