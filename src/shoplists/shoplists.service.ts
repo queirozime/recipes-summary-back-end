@@ -5,7 +5,7 @@ import { ShoplistDocument } from 'src/shoplists/documents/shoplist.document';
 import { Shoplist } from 'src/shoplists/entities/shoplist.entity';
 
 @Injectable()
-export class ShoplistService {
+export class ShoplistsService {
   constructor(private readonly shoplistDocument: ShoplistDocument) {}
 
   create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
