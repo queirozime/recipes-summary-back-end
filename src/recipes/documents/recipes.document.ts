@@ -39,13 +39,18 @@ export class RecipeDocument {
   async findAll(): Promise<Recipe[]> {
     const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).get();
     const recipes: Recipe[] = [];
-    snapshot.forEach(doc => recipes.push(doc.data()));
+    snapshot.forEach(doc => {
+      let recipe = doc.data()
+      recipe.setId(doc.id)
+      recipes.push(recipe)
+    });
     return recipes;
   }
 
   async findOne(id: string): Promise<Recipe> {
     const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).get();
-    const recipe = snapshot.data();
+    let recipe = snapshot.data();
+    recipe.setId(snapshot.id)
     return recipe;
   }
 
