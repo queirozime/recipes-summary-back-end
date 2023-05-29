@@ -3,7 +3,8 @@ import { Ingredient } from "../interfaces/ingredient.interface";
 import { Timestamp } from "@google-cloud/firestore";
 
 export class Shoplist {
-  private id: string;
+  private userId: string;
+  private shoplistId: string;
   private title: string;
   private favorite: boolean;
   private lastAlterationDate: Timestamp;
@@ -11,9 +12,10 @@ export class Shoplist {
   private ingredients: Ingredient[];
 
   constructor(
-    title: string, favorite: boolean, recipes: Recipe[], 
+    userId: string, title: string, favorite: boolean, recipes: Recipe[], 
     lastAlterationDate?: Timestamp, ingredients?: Ingredient[]
   ) {
+    this.userId = userId;
     this.title = title;
     this.favorite = favorite;
     this.lastAlterationDate = lastAlterationDate || this.updateLastAlterationDate();
@@ -22,8 +24,12 @@ export class Shoplist {
   }
 
   // Getters e Setters
-  setId(id: string) {
-    this.id = id;
+  setShoplistId(shoplistId: string) {
+    this.shoplistId = shoplistId;
+  }
+
+  getUserId(): string {
+    return this.userId;
   }
 
   getTitle(): string {

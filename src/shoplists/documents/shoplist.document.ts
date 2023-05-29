@@ -9,6 +9,7 @@ export class ShoplistDocument {
   private shoplistConverter = { // Conversor de objetos Firebase
     toFirestore(shoplist: Shoplist): DocumentData {
       return {  
+        userId: shoplist.getUserId(),
         title: shoplist.getTitle(),
         favorite: shoplist.isFavorite(),
         lastAlterationDate: shoplist.getLastAlterationDate(),
@@ -16,17 +17,17 @@ export class ShoplistDocument {
         ingredients: shoplist.getIngredients()
       }
     },
-    //TODO: Alterar método fromFirestore para retornar Recipe[]
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
       const data = snapshot.data();
       const shoplist = new Shoplist(
+        data.userId,
         data.title, 
         data.favorite, 
         data.recipes, 
         data.lastAlterationDate, 
         data.ingredients
       );
-      shoplist.setId(snapshot.id);
+      shoplist.setShoplistId(snapshot.id);
       return shoplist;
     }
   };
@@ -38,7 +39,7 @@ export class ShoplistDocument {
 
   async create(shoplist: Shoplist): Promise<Shoplist> {
     const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).add(shoplist);
-    shoplist.setId(snapshot.id);
+    shoplist.setShoplistId(snapshot.id);
     return shoplist;
   }
 
@@ -53,6 +54,10 @@ export class ShoplistDocument {
     const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
     const shoplist = snapshot.data();
     return shoplist;
+  }
+
+  async update() {
+    return;
   }
 
   async delete(id: string) {

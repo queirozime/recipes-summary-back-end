@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
+import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
+import { ShoplistDocument } from 'src/shoplists/documents/shoplist.document';
+import { Shoplist } from 'src/shoplists/entities/shoplist.entity';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private shoplistDocument: ShoplistDocument) {}
+
+  create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
+    const shoplist = new Shoplist(
+      createShoplistDto.userId, 
+      createShoplistDto.title, 
+      createShoplistDto.favorite, 
+      createShoplistDto.recipes
+    );
+    return this.shoplistDocument.create(shoplist);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findAll(): Promise<Shoplist[]> {
+    return this.shoplistDocument.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string): Promise<Shoplist> {
+    return this.shoplistDocument.findOne(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  // ? Estritamente necessário com limitação de tempo ?
+  update(id: number, updateShoplistDto: UpdateShoplistDto) {
+    return `This action updates a #${id} shoplist`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    this.shoplistDocument.delete(id);
+    return `This action removes a #${id} shoplist`;
   }
 }
