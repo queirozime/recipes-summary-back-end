@@ -1,10 +1,11 @@
 import { Ingredient } from "../../shoplists/interfaces/ingredient.interface";
 
-export class CreateRecipeDto {
+export interface Recipe {
+  id: string;
   title: string;
-  preparationTime: number;
   basePortion: number;
-  imageUrl: string;
   ingredients: Ingredient[];
+  imageUrl: string;
   instructions: string[];
+  preparationTime: number;
 }
