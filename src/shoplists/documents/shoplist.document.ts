@@ -43,8 +43,8 @@ export class ShoplistDocument {
     return shoplist;
   }
 
-  async findAll(): Promise<Shoplist[]> {
-    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).get();
+  async findAll(userId: string): Promise<Shoplist[]> {
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', userId).get();
     const shoplists: Shoplist[] = [];
     snapshot.forEach(doc => shoplists.push(doc.data()));
     return shoplists;
