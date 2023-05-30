@@ -25,7 +25,6 @@ let UserDocument = UserDocument_1 = class UserDocument {
                 return {
                     name: user.getName(),
                     email: user.getEmail(),
-                    passwor: user.getPassword(),
                 };
             },
             fromFirestore(snapshot) {
@@ -59,7 +58,7 @@ let UserDocument = UserDocument_1 = class UserDocument {
         await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
     }
 };
-UserDocument.collectionName = 'Users';
+UserDocument.collectionName = 'users';
 UserDocument = UserDocument_1 = __decorate([
     (0, common_1.Injectable)({ scope: common_1.Scope.REQUEST }),
     __param(0, (0, common_1.Inject)(UserDocument_1.collectionName)),

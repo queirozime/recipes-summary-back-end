@@ -4,14 +4,13 @@ import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@googl
 
 @Injectable({scope: Scope.REQUEST})
 export class UserDocument {
-  static collectionName = 'Users';
+  static collectionName = 'users';
   
   private userConverter = { // Conversor de objetos Firebase
     toFirestore(user: User): DocumentData {
       return {  
         name: user.getName(),
         email:user.getEmail(),
-        passwor:user.getPassword(),
       }
     },
     //TODO: Alterar método fromFirestore para retornar User[]
