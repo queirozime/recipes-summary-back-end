@@ -56,7 +56,7 @@ export class ShoplistDocument {
     return shoplist;
   }
 
-  async update() {
+  async update(): Promise<Shoplist> {
     return;
   }
 

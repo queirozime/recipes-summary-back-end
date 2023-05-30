@@ -53,6 +53,11 @@ export class Shoplist {
   }
 
   // Regras de Negócio
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.ingredients = this.setIngredients();
+  }
+
   private updateLastAlterationDate(): Timestamp {
     return Timestamp.now();
   }

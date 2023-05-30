@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
 import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
 import { ShoplistsService } from './shoplists.service';
+import { AddRecipeDto } from './dto/add-recipe.dto';
 
 @Controller('shoplists')
 export class ShoplistsController {
@@ -10,6 +11,11 @@ export class ShoplistsController {
   @Post('create')
   create(@Body() createShoplistDto: CreateShoplistDto) {
     return this.shoplistService.create(createShoplistDto);
+  }
+
+  @Post('add')
+  addRecipe(@Body() addRecipeDto: AddRecipeDto) {
+    return this.shoplistService.addRecipe(addRecipeDto);
   }
 
   @Get()
