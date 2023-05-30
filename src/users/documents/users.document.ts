@@ -11,7 +11,7 @@ export class UserDocument {
       return {  
         name: user.getName(),
         email:user.getEmail(),
-        
+        passwor:user.getPassword(),
       }
     },
     //TODO: Alterar método fromFirestore para retornar User[]
