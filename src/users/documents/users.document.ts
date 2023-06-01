@@ -1,6 +1,8 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { User } from "../entities/user.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import * as admin from 'firebase-admin';
+
 
 @Injectable({scope: Scope.REQUEST})
 export class UserDocument {
@@ -11,12 +13,13 @@ export class UserDocument {
       return {  
         name: user.getName(),
         email:user.getEmail(),
+        uid: user.getUid(),
       }
     },
     //TODO: Alterar método fromFirestore para retornar User[]
     fromFirestore(snapshot: QueryDocumentSnapshot): User {
       const data = snapshot.data();
-      return new User(data.name,data.email,data.password);
+      return new User(data.name,data.email,data.uid);
     }
   };
 
@@ -27,7 +30,7 @@ export class UserDocument {
 
   async create(user: User): Promise<User> {
     const snapshot = await this.userCollection.withConverter(this.userConverter).add(user);
-    user.setId(snapshot.id);
+    user.setUid(snapshot.id);
     return user;
   }
 
@@ -35,19 +38,38 @@ export class UserDocument {
     const snapshot = await this.userCollection.withConverter(this.userConverter).get();
     const users: User[] = [];
     snapshot.forEach(doc => {
-      let user = doc.data()
-      user.setId(doc.id)
-      users.push(user)
+      let user = doc.data();
+      user.setUid(doc.id);
+      users.push(user);
     });
     return users;
   }
 
-  async findOne(id: string): Promise<User> {
-    const snapshot = await this.userCollection.withConverter(this.userConverter).doc('/' + id).get();
-    let user = snapshot.data();
-    user.setId(snapshot.id)
+  async findOne(uid:string):Promise<User> {
+    console.log(uid);
+    const query = this.userCollection.withConverter(this.userConverter).where('uid', '==', uid);
+    const snapshot = await query.get();
+    
+    if (snapshot.empty) {
+      console.log('Nenhum usuário encontrado com esse UID.');
+      return;
+    }
+    let user: User;
+    // Iterar sobre os documentos retornados
+    snapshot.forEach(doc => {
+      console.log('Usuário encontrado:', doc.id, doc.data());
+      user = doc.data(); 
+    });
     return user;
   }
+
+  async findWithToken(token: string): Promise<User>{
+    const detoken = await admin.auth().verifyIdToken(token);
+    const uid =detoken.uid;
+    let user = await this.findOne(uid);
+    return user;
+  }
+
 
   async delete(id: string) {
     await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();

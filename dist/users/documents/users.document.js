@@ -17,6 +17,7 @@ exports.UserDocument = void 0;
 const common_1 = require("@nestjs/common");
 const user_entity_1 = require("../entities/user.entity");
 const firestore_1 = require("@google-cloud/firestore");
+const admin = require("firebase-admin");
 let UserDocument = UserDocument_1 = class UserDocument {
     constructor(userCollection) {
         this.userCollection = userCollection;
@@ -25,17 +26,18 @@ let UserDocument = UserDocument_1 = class UserDocument {
                 return {
                     name: user.getName(),
                     email: user.getEmail(),
+                    uid: user.getUid(),
                 };
             },
             fromFirestore(snapshot) {
                 const data = snapshot.data();
-                return new user_entity_1.User(data.name, data.email, data.password);
+                return new user_entity_1.User(data.name, data.email, data.uid);
             }
         };
     }
     async create(user) {
         const snapshot = await this.userCollection.withConverter(this.userConverter).add(user);
-        user.setId(snapshot.id);
+        user.setUid(snapshot.id);
         return user;
     }
     async findAll() {
@@ -43,15 +45,30 @@ let UserDocument = UserDocument_1 = class UserDocument {
         const users = [];
         snapshot.forEach(doc => {
             let user = doc.data();
-            user.setId(doc.id);
+            user.setUid(doc.id);
             users.push(user);
         });
         return users;
     }
-    async findOne(id) {
-        const snapshot = await this.userCollection.withConverter(this.userConverter).doc('/' + id).get();
-        let user = snapshot.data();
-        user.setId(snapshot.id);
+    async findOne(uid) {
+        console.log(uid);
+        const query = this.userCollection.withConverter(this.userConverter).where('uid', '==', uid);
+        const snapshot = await query.get();
+        if (snapshot.empty) {
+            console.log('Nenhum usuário encontrado com esse UID.');
+            return;
+        }
+        let user;
+        snapshot.forEach(doc => {
+            console.log('Usuário encontrado:', doc.id, doc.data());
+            user = doc.data();
+        });
+        return user;
+    }
+    async findWithToken(token) {
+        const detoken = await admin.auth().verifyIdToken(token);
+        const uid = detoken.uid;
+        let user = await this.findOne(uid);
         return user;
     }
     async delete(id) {

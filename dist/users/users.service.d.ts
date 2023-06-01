@@ -7,5 +7,6 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<User>;
     findAll(): Promise<User[]>;
     findOne(id: string): Promise<User>;
+    findWithToken(token: string): Promise<User>;
     remove(id: string): string;
 }

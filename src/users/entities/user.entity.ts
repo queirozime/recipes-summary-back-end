@@ -1,26 +1,25 @@
-
 export class User {
-  private id: string;
+  private uid: string;
   private name: string;
   private email: string;
   private password: string;
 
   constructor(
-    name: string, email: string, password: string
+    name: string, email: string, uid: string
   ) {
     this.name = name;
     this.email = email;
-    this.password = password;
+    this.uid = uid;
 
   }
 
   // Getters e Setters
-  setId(id: string) {
-    this.id = id;
+  setUid(uid: string) {
+    this.uid = uid;
   }
 
-  getId(): string {
-    return this.id;
+  getUid(): string {
+    return this.uid;
   }
   getName(): string {
     return this.name;
@@ -30,7 +29,7 @@ export class User {
     return this.email;
   }
 
-  getPassword(): string {
-    return this.password;
+  setPassword(password: string) {
+    this.password=password;
   }
 }

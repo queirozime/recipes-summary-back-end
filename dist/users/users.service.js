@@ -27,6 +27,9 @@ let UsersService = class UsersService {
     async findOne(id) {
         return this.userDocument.findOne(id);
     }
+    async findWithToken(token) {
+        return this.userDocument.findWithToken(token);
+    }
     remove(id) {
         this.userDocument.delete(id);
         return `The user #${id} was removed successfully`;

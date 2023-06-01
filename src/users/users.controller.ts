@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 //import { UpdateUserDto } from './dto/update-user.dto';
 
+
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -22,6 +24,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Get('-token')
+  findWithToken(@Param('token') token :string){
+    return this.usersService.findWithToken(token);   
+  }
+
   /*@Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
   return this.usersService.update(id, updateUserDto);
@@ -32,3 +39,4 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 }
+

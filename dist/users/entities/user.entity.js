@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 class User {
-    constructor(name, email, password) {
+    constructor(name, email, uid) {
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.uid = uid;
     }
-    setId(id) {
-        this.id = id;
+    setUid(uid) {
+        this.uid = uid;
     }
-    getId() {
-        return this.id;
+    getUid() {
+        return this.uid;
     }
     getName() {
         return this.name;
@@ -19,8 +19,8 @@ class User {
     getEmail() {
         return this.email;
     }
-    getPassword() {
-        return this.password;
+    setPassword(password) {
+        this.password = password;
     }
 }
 exports.User = User;

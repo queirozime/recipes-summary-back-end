@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDocument } from './documents/users.document';
 import { User } from './entities/user.entity';
-
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +19,10 @@ export class UsersService {
     
       async findOne(id: string): Promise<User> {
        return this.userDocument.findOne(id);
+      }
+
+      async findWithToken(token: string): Promise<User>{
+        return this.userDocument.findWithToken(token);
       }
     
       remove(id: string) {

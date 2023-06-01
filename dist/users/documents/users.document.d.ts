@@ -7,6 +7,7 @@ export declare class UserDocument {
     constructor(userCollection: CollectionReference<UserDocument>);
     create(user: User): Promise<User>;
     findAll(): Promise<User[]>;
-    findOne(id: string): Promise<User>;
+    findOne(uid: string): Promise<User>;
+    findWithToken(token: string): Promise<User>;
     delete(id: string): Promise<void>;
 }

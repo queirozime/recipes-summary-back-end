@@ -1,12 +1,12 @@
 export declare class User {
-    private id;
+    private uid;
     private name;
     private email;
     private password;
-    constructor(name: string, email: string, password: string);
-    setId(id: string): void;
-    getId(): string;
+    constructor(name: string, email: string, uid: string);
+    setUid(uid: string): void;
+    getUid(): string;
     getName(): string;
     getEmail(): string;
-    getPassword(): string;
+    setPassword(password: string): void;
 }
