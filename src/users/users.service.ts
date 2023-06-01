@@ -22,7 +22,7 @@ export class UsersService {
       }
 
       async findWithToken(token: string): Promise<User>{
-        return this.userDocument.findWithToken(token);
+        return this.userDocument.findOne(token);
       }
     
       remove(id: string) {

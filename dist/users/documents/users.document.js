@@ -18,6 +18,11 @@ const common_1 = require("@nestjs/common");
 const user_entity_1 = require("../entities/user.entity");
 const firestore_1 = require("@google-cloud/firestore");
 const admin = require("firebase-admin");
+require('dotenv').config();
+const credencials = JSON.parse(process.env.SB_KEY);
+admin.initializeApp({
+    credential: admin.credential.cert(credencials),
+});
 let UserDocument = UserDocument_1 = class UserDocument {
     constructor(userCollection) {
         this.userCollection = userCollection;
@@ -50,26 +55,27 @@ let UserDocument = UserDocument_1 = class UserDocument {
         });
         return users;
     }
-    async findOne(uid) {
-        console.log(uid);
-        const query = this.userCollection.withConverter(this.userConverter).where('uid', '==', uid);
-        const snapshot = await query.get();
-        if (snapshot.empty) {
-            console.log('Nenhum usuário encontrado com esse UID.');
-            return;
+    async findOne(token) {
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            const uid = decodedToken.uid;
+            const query = this.userCollection.withConverter(this.userConverter).where('uid', '==', uid);
+            const snapshot = await query.get();
+            if (snapshot.empty) {
+                console.log('Nenhum usuário encontrado com esse UID.');
+                return null;
+            }
+            let user = null;
+            snapshot.forEach(doc => {
+                console.log('Usuário encontrado:', doc.id, doc.data());
+                user = doc.data();
+            });
+            return user;
         }
-        let user;
-        snapshot.forEach(doc => {
-            console.log('Usuário encontrado:', doc.id, doc.data());
-            user = doc.data();
-        });
-        return user;
-    }
-    async findWithToken(token) {
-        const detoken = await admin.auth().verifyIdToken(token);
-        const uid = detoken.uid;
-        let user = await this.findOne(uid);
-        return user;
+        catch (error) {
+            console.log(error);
+            return null;
+        }
     }
     async delete(id) {
         await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();

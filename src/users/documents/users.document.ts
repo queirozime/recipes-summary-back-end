@@ -3,6 +3,13 @@ import { User } from "../entities/user.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import * as admin from 'firebase-admin';
 
+require('dotenv').config();
+
+const credencials = JSON.parse(process.env.SB_KEY); 
+
+admin.initializeApp({
+  credential: admin.credential.cert(credencials),
+});
 
 @Injectable({scope: Scope.REQUEST})
 export class UserDocument {
@@ -45,31 +52,31 @@ export class UserDocument {
     return users;
   }
 
-  async findOne(uid:string):Promise<User> {
-    console.log(uid);
+async findOne(token: string): Promise<User> {
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const uid = decodedToken.uid;
+
     const query = this.userCollection.withConverter(this.userConverter).where('uid', '==', uid);
     const snapshot = await query.get();
-    
+
     if (snapshot.empty) {
       console.log('Nenhum usuário encontrado com esse UID.');
-      return;
+      return null; // or return any default value as per your requirement
     }
-    let user: User;
-    // Iterar sobre os documentos retornados
+
+    let user: User = null;
+    // Iterating over the documents returned
     snapshot.forEach(doc => {
       console.log('Usuário encontrado:', doc.id, doc.data());
-      user = doc.data(); 
+      user = doc.data();
     });
     return user;
+  } catch (error) {
+    console.log(error);
+    return null; // or return any default value as per your requirement
   }
-
-  async findWithToken(token: string): Promise<User>{
-    const detoken = await admin.auth().verifyIdToken(token);
-    const uid =detoken.uid;
-    let user = await this.findOne(uid);
-    return user;
-  }
-
+}
 
   async delete(id: string) {
     await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
