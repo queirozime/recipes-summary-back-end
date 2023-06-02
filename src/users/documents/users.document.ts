@@ -52,7 +52,8 @@ export class UserDocument {
     return users;
   }
 
-async findOne(token: string): Promise<User> {
+
+async findDocument(token:string): Promise<QueryDocumentSnapshot<User>>{
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
     const uid = decodedToken.uid;
@@ -62,23 +63,33 @@ async findOne(token: string): Promise<User> {
 
     if (snapshot.empty) {
       console.log('Nenhum usuário encontrado com esse UID.');
-      return null; // or return any default value as per your requirement
+      return null;
     }
 
-    let user: User = null;
+    let document: QueryDocumentSnapshot<User> = null;
+    
     // Iterating over the documents returned
     snapshot.forEach(doc => {
-      console.log('Usuário encontrado:', doc.id, doc.data());
-      user = doc.data();
+      document = doc;
     });
-    return user;
+    return document;
   } catch (error) {
     console.log(error);
     return null; // or return any default value as per your requirement
   }
+}  
+
+async findOne(token: string): Promise<User> {
+    const doc = await this.findDocument(token);
+    const user = doc.data() as User;
+    // Iterating over the documents returned
+  
+    console.log('Usuário encontrado:', doc.id, user);
+    return user;
 }
 
-  async delete(id: string) {
+  async delete(token: string) {
+    const id = (await this.findDocument(token)).id;
     await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
   }
 }

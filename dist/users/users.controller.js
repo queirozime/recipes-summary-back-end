@@ -26,11 +26,11 @@ let UsersController = class UsersController {
     findAll() {
         return this.usersService.findAll();
     }
-    findOne(id) {
-        return this.usersService.findOne(id);
+    findOne(token) {
+        return this.usersService.findOne(token);
     }
-    remove(id) {
-        return this.usersService.remove(id);
+    remove(token) {
+        return this.usersService.remove(token);
     }
 };
 __decorate([
@@ -41,21 +41,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('all'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)(':token'),
+    __param(0, (0, common_1.Param)('token')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Delete)(':token'),
+    __param(0, (0, common_1.Param)('token')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)

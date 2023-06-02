@@ -24,15 +24,12 @@ let UsersService = class UsersService {
     async findAll() {
         return this.userDocument.findAll();
     }
-    async findOne(id) {
-        return this.userDocument.findOne(id);
-    }
-    async findWithToken(token) {
+    async findOne(token) {
         return this.userDocument.findOne(token);
     }
-    remove(id) {
-        this.userDocument.delete(id);
-        return `The user #${id} was removed successfully`;
+    remove(token) {
+        this.userDocument.delete(token);
+        return `The user #${token} was removed successfully`;
     }
 };
 UsersService = __decorate([

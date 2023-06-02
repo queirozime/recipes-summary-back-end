@@ -17,16 +17,12 @@ export class UsersService {
         return this.userDocument.findAll();
       }
     
-      async findOne(id: string): Promise<User> {
-       return this.userDocument.findOne(id);
+      async findOne(token: string): Promise<User> {
+       return this.userDocument.findOne(token);
       }
 
-      async findWithToken(token: string): Promise<User>{
-        return this.userDocument.findOne(token);
-      }
-    
-      remove(id: string) {
-        this.userDocument.delete(id);
-        return `The user #${id} was removed successfully`;
+      remove(token: string) {
+        this.userDocument.delete(token);
+        return `The user #${token} was removed successfully`;
       }
 }

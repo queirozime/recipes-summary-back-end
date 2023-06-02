@@ -14,14 +14,14 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Get(':token')
+  findOne(@Param('token') token: string) {
+    return this.usersService.findOne(token);
   }
 
   /*@Patch(':id')
@@ -29,9 +29,9 @@ export class UsersController {
   return this.usersService.update(id, updateUserDto);
   }*/
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete(':token')
+  remove(@Param('token') token: string) {
+    return this.usersService.remove(token);
   }
 }
 

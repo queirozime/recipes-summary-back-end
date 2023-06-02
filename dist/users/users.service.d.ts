@@ -6,7 +6,6 @@ export declare class UsersService {
     constructor(userDocument: UserDocument);
     create(createUserDto: CreateUserDto): Promise<User>;
     findAll(): Promise<User[]>;
-    findOne(id: string): Promise<User>;
-    findWithToken(token: string): Promise<User>;
-    remove(id: string): string;
+    findOne(token: string): Promise<User>;
+    remove(token: string): string;
 }

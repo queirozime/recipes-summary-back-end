@@ -55,7 +55,7 @@ let UserDocument = UserDocument_1 = class UserDocument {
         });
         return users;
     }
-    async findOne(token) {
+    async findDocument(token) {
         try {
             const decodedToken = await admin.auth().verifyIdToken(token);
             const uid = decodedToken.uid;
@@ -65,19 +65,25 @@ let UserDocument = UserDocument_1 = class UserDocument {
                 console.log('Nenhum usuário encontrado com esse UID.');
                 return null;
             }
-            let user = null;
+            let document = null;
             snapshot.forEach(doc => {
-                console.log('Usuário encontrado:', doc.id, doc.data());
-                user = doc.data();
+                document = doc;
             });
-            return user;
+            return document;
         }
         catch (error) {
             console.log(error);
             return null;
         }
     }
-    async delete(id) {
+    async findOne(token) {
+        const doc = await this.findDocument(token);
+        const user = doc.data();
+        console.log('Usuário encontrado:', doc.id, user);
+        return user;
+    }
+    async delete(token) {
+        const id = (await this.findDocument(token)).id;
         await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
     }
 };
