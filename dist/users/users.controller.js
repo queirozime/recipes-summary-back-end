@@ -26,10 +26,12 @@ let UsersController = class UsersController {
     findAll() {
         return this.usersService.findAll();
     }
-    findOne(token) {
+    findOne(req) {
+        const token = req.headers.authorization;
         return this.usersService.findOne(token);
     }
-    remove(token) {
+    remove(req) {
+        const token = req.headers.authorization;
         return this.usersService.remove(token);
     }
 };
@@ -47,17 +49,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':token'),
-    __param(0, (0, common_1.Param)('token')),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Delete)(':token'),
-    __param(0, (0, common_1.Param)('token')),
+    (0, common_1.Delete)(),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "remove", null);
 UsersController = __decorate([
