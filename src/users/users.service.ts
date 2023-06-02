@@ -22,7 +22,6 @@ export class UsersService {
       }
 
       remove(token: string) {
-        this.userDocument.delete(token);
-        return `The user #${token} was removed successfully`;
+        return this.userDocument.delete(token);
       }
 }

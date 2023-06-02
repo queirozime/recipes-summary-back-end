@@ -89,8 +89,9 @@ async findOne(token: string): Promise<User> {
 }
 
   async delete(token: string) {
-    const id = (await this.findDocument(token)).id;
-    await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
+    const doc = (await this.findDocument(token));
+    await this.userCollection.withConverter(this.userConverter).doc('/' + doc.id).delete();
+    return `The user #${doc.data().getUid()} was removed successfully`;
   }
 }
 
