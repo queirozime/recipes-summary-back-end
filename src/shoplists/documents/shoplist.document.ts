@@ -56,8 +56,10 @@ export class ShoplistDocument {
     return shoplist;
   }
 
-  async update() {
-    return;
+  async update(shoplist: Shoplist, id: string): Promise<Shoplist> {
+    const firestoreObject = this.shoplistConverter.toFirestore(shoplist);
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).update(firestoreObject)
+    return shoplist;
   }
 
   async delete(id: string) {

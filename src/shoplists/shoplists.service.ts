@@ -27,8 +27,14 @@ export class ShoplistsService {
   }
 
   // ? Estritamente necessário com limitação de tempo ?
-  update(id: number, updateShoplistDto: UpdateShoplistDto) {
-    return `This action updates a #${id} shoplist`;
+  update(id: string, updateShoplistDto: UpdateShoplistDto) {
+    const shoplist = new Shoplist(
+      updateShoplistDto.userId, 
+      updateShoplistDto.title, 
+      updateShoplistDto.favorite, 
+      updateShoplistDto.recipes
+    );
+    return this.shoplistDocument.update(shoplist, id);
   }
 
   remove(id: string) {
