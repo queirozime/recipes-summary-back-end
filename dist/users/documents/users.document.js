@@ -83,8 +83,9 @@ let UserDocument = UserDocument_1 = class UserDocument {
         return user;
     }
     async delete(token) {
-        const id = (await this.findDocument(token)).id;
-        await this.userCollection.withConverter(this.userConverter).doc('/' + id).delete();
+        const doc = (await this.findDocument(token));
+        await this.userCollection.withConverter(this.userConverter).doc('/' + doc.id).delete();
+        return `The user #${doc.data().getUid()} was removed successfully`;
     }
 };
 UserDocument.collectionName = 'users';

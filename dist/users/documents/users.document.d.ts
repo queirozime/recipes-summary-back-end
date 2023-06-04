@@ -9,5 +9,5 @@ export declare class UserDocument {
     findAll(): Promise<User[]>;
     findDocument(token: string): Promise<QueryDocumentSnapshot<User>>;
     findOne(token: string): Promise<User>;
-    delete(token: string): Promise<void>;
+    delete(token: string): Promise<string>;
 }

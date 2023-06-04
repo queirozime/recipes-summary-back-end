@@ -6,5 +6,5 @@ export declare class UsersController {
     create(createUserDto: CreateUserDto): Promise<import("./entities/user.entity").User>;
     findAll(): Promise<import("./entities/user.entity").User[]>;
     findOne(req: any): Promise<import("./entities/user.entity").User>;
-    remove(req: any): string;
+    remove(req: any): Promise<string>;
 }

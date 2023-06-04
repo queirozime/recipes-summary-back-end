@@ -28,8 +28,7 @@ let UsersService = class UsersService {
         return this.userDocument.findOne(token);
     }
     remove(token) {
-        this.userDocument.delete(token);
-        return `The user #${token} was removed successfully`;
+        return this.userDocument.delete(token);
     }
 };
 UsersService = __decorate([
