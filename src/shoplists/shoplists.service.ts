@@ -23,8 +23,8 @@ export class ShoplistsService {
     return this.shoplistDocument.update();
   }
 
-  findAll(userId: string): Promise<Shoplist[]> {
-    return this.shoplistDocument.findAll(userId);
+  findAll(token: string): Promise<Shoplist[]> {
+    return this.shoplistDocument.findAll(token);
   }
 
   findOne(id: string): Promise<Shoplist> {
