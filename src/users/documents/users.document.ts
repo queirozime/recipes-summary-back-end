@@ -5,7 +5,9 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from "@google-cloud/firestore";
-import * as admin from "firebase-admin";
+import { TokenVerificationService } from "src/firebase/tokenVerification.service";
+import { FirebaseModule } from "src/firebase/firebase.module";
+//import * as admin from "firebase-admin";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
@@ -29,8 +31,9 @@ export class UserDocument {
 
   constructor(
     @Inject(UserDocument.collectionName)
-    private userCollection: CollectionReference<UserDocument>
-  ) {}
+    private userCollection: CollectionReference<UserDocument>,
+    private readonly tokenVerificationService: TokenVerificationService
+  ) { }
 
   async create(user: User): Promise<User> {
     const snapshot = await this.userCollection
@@ -55,26 +58,31 @@ export class UserDocument {
 
   async findDocument(token: string): Promise<QueryDocumentSnapshot<User>> {
     try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      const uid = decodedToken.uid;
+      
 
-      const query = this.userCollection
-        .withConverter(this.userConverter)
-        .where("uid", "==", uid);
-      const snapshot = await query.get();
+      if (this.tokenVerificationService.verifyToken(token)) {
+        const uid = this.tokenVerificationService.getuid();
+        const query = this.userCollection
+          .withConverter(this.userConverter)
+          .where("uid", "==", uid);
+        const snapshot = await query.get();
 
-      if (snapshot.empty) {
-        console.log("Nenhum usuário encontrado com esse UID.");
-        return null;
+        if (snapshot.empty) {
+          console.log("Nenhum usuário encontrado com esse UID.");
+          return null;
+        }
+
+        let document: QueryDocumentSnapshot<User> = null;
+
+        // Iterating over the documents returned
+        snapshot.forEach((doc) => {
+          document = doc;
+        });
+        return document;
       }
-
-      let document: QueryDocumentSnapshot<User> = null;
-
-      // Iterating over the documents returned
-      snapshot.forEach((doc) => {
-        document = doc;
-      });
-      return document;
+      else {
+        console.log("Token invalido")
+      }
     } catch (error) {
       console.log(error);
       return null; // or return any default value as per your requirement
