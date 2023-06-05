@@ -7,14 +7,6 @@ import {
 } from "@google-cloud/firestore";
 import * as admin from "firebase-admin";
 
-require("dotenv").config();
-
-const credencials = JSON.parse(process.env.SB_KEY);
-
-admin.initializeApp({
-  credential: admin.credential.cert(credencials),
-});
-
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
   static collectionName = "users";

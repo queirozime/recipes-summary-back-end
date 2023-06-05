@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request } from '@nestjs/common';
 import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
 import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
 import { ShoplistsService } from './shoplists.service';
@@ -19,8 +19,9 @@ export class ShoplistsController {
   }
 
   @Get()
-  findAll(@Query('user') userId: string) {
-    return this.shoplistService.findAll(userId);
+  findAll(@Request() req) {
+    const token = req.headers.authorization;
+    return this.shoplistService.findAll(token);
   }
 
   @Get(':id')

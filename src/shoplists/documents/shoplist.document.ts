@@ -1,6 +1,7 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import * as admin from 'firebase-admin';
 
 @Injectable({scope: Scope.REQUEST})
 export class ShoplistDocument {
@@ -43,11 +44,19 @@ export class ShoplistDocument {
     return shoplist;
   }
 
-  async findAll(userId: string): Promise<Shoplist[]> {
-    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', userId).get();
-    const shoplists: Shoplist[] = [];
-    snapshot.forEach(doc => shoplists.push(doc.data()));
-    return shoplists;
+  async findAll(token: string): Promise<Shoplist[]> {
+    try{
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      const uid = decodedToken.uid;
+      const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
+      const shoplists: Shoplist[] = [];
+      snapshot.forEach(doc => shoplists.push(doc.data()));
+      return shoplists;
+    }
+    catch (error){
+      console.log(error);
+      return null;
+    }
   }
 
   async findOne(id: string): Promise<Shoplist> {
