@@ -24,7 +24,7 @@ export class UsersService {
     return this.userDocument.findOne(token);
   }
 
-  remove(token: string) {
+  async remove(token: string) {
     return this.userDocument.delete(token);
   }
 }
