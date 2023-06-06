@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
+import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
 import { ShoplistsService } from './shoplists.service';
-import { CreateShoplistDto } from './dto/create-shoplist.dto';
-import { UpdateShoplistDto } from './dto/update-shoplist.dto';
+import { AddRecipeDto } from './dto/add-recipe.dto';
 
 @Controller('shoplists')
 export class ShoplistsController {
-  constructor(private readonly shoplistsService: ShoplistsService) {}
+  constructor(private readonly shoplistService: ShoplistsService) {}
 
   @Post('create')
   create(@Body() createShoplistDto: CreateShoplistDto) {
-    return this.shoplistsService.create(createShoplistDto);
+    return this.shoplistService.create(createShoplistDto);
   }
 
-  @Get('all')
-  findAll() {
-    return this.shoplistsService.findAll();
+  @Post('add')
+  addRecipe(@Body() addRecipeDto: AddRecipeDto) {
+    return this.shoplistService.addRecipe(addRecipeDto);
+  }
+
+  @Get()
+  findAll(@Query('user') userId: string) {
+    return this.shoplistService.findAll(userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.shoplistsService.findOne(id);
+    return this.shoplistService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateShoplistDto: UpdateShoplistDto) {
-    return this.shoplistsService.update(+id, updateShoplistDto);
+    return this.shoplistService.update(+id, updateShoplistDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.shoplistsService.remove(id);
+    return this.shoplistService.remove(id);
   }
 }
