@@ -13,10 +13,10 @@ export class ShoplistsController {
     return this.shoplistService.create(createShoplistDto);
   }
 
-  @Post('add')
+  /*@Post('add')
   addRecipe(@Body() addRecipeDto: AddRecipeDto) {
     return this.shoplistService.addRecipe(addRecipeDto);
-  }
+  }*/
 
   @Get()
   findAll(@Request() req) {

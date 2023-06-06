@@ -5,11 +5,12 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from "@google-cloud/firestore";
+import { AuthService } from "src/firestore/auth.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
   static collectionName = "users";
-  private tokenVerification:TokenVerificationService;
+  static authService: AuthService;
   private userConverter = {
     // Conversor de objetos Firebase
     toFirestore(user: User): DocumentData {

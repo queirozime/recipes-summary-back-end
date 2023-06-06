@@ -26,9 +26,9 @@ export class ShoplistsService {
     return this.shoplistDocument.create(shoplist);
   }
 
-  addRecipe(addRecipeDto: AddRecipeDto): Promise<Shoplist> {
-    return this.shoplistDocument.update();
-  }
+  /*addRecipe(addRecipeDto: AddRecipeDto): Promise<Shoplist> {
+    return this.shoplistDocument.update(addRecipeDto);
+  }*/
 
   findAll(token: string): Promise<Shoplist[]> {
     return this.shoplistDocument.findAll(token);
