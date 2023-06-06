@@ -5,8 +5,6 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from "@google-cloud/firestore";
-import { TokenVerificationService } from "src/firebase/tokenVerification.service";
-//import * as admin from "firebase-admin";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
@@ -31,7 +29,8 @@ export class UserDocument {
   constructor(
     @Inject(UserDocument.collectionName)
     private userCollection: CollectionReference<UserDocument>,
-  ) { this.tokenVerification = new TokenVerificationService();}
+    private firebaseService: Service
+  ) { this.tokenVerification = Service;}
 
   async create(user: User): Promise<User> {
     const snapshot = await this.userCollection
