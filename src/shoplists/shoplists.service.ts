@@ -38,9 +38,14 @@ export class ShoplistsService {
     return this.shoplistDocument.findOne(id);
   }
 
-  // ? Estritamente necessário com limitação de tempo ?
-  update(id: number, updateShoplistDto: UpdateShoplistDto) {
-    return this.shoplistDocument.update();
+  update(id: string, updateShoplistDto: UpdateShoplistDto) {
+    const shoplist = new Shoplist(
+      updateShoplistDto.userId, 
+      updateShoplistDto.title, 
+      updateShoplistDto.favorite, 
+      updateShoplistDto.recipes
+    );
+    return this.shoplistDocument.update(shoplist, id);
   }
 
   remove(id: string) {

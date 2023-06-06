@@ -31,7 +31,7 @@ export class ShoplistsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateShoplistDto: UpdateShoplistDto) {
-    return this.shoplistService.update(+id, updateShoplistDto);
+    return this.shoplistService.update(id, updateShoplistDto);
   }
 
   @Delete(':id')
