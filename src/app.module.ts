@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirestoreModule } from './firestore/firestore.module';
-import { FirebaseModule } from './firebase/firebase.module';
+import { FirebaseAdminModule } from './firebase/firebase.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { UsersModule } from './users/users.module';
 import { ShoplistsModule } from './shoplists/shoplists.module';
@@ -20,13 +20,7 @@ import { ShoplistsModule } from './shoplists/shoplists.module';
       }),
       inject: [ConfigService],
     }),
-    FirebaseModule.forRoot({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        keyFilename: configService.get<string>('SA_KEY'),
-      }),
-      inject: [ConfigService],
-    }),
+    FirebaseAdminModule,
     RecipesModule,
     UsersModule,
     ShoplistsModule,

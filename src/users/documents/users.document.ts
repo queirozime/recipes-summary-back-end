@@ -6,13 +6,12 @@ import {
   QueryDocumentSnapshot,
 } from "@google-cloud/firestore";
 import { TokenVerificationService } from "src/firebase/tokenVerification.service";
-import { FirebaseModule } from "src/firebase/firebase.module";
 //import * as admin from "firebase-admin";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
   static collectionName = "users";
-
+  private tokenVerification:TokenVerificationService;
   private userConverter = {
     // Conversor de objetos Firebase
     toFirestore(user: User): DocumentData {
@@ -32,8 +31,7 @@ export class UserDocument {
   constructor(
     @Inject(UserDocument.collectionName)
     private userCollection: CollectionReference<UserDocument>,
-    private readonly tokenVerificationService: TokenVerificationService
-  ) { }
+  ) { this.tokenVerification = new TokenVerificationService();}
 
   async create(user: User): Promise<User> {
     const snapshot = await this.userCollection
@@ -58,10 +56,8 @@ export class UserDocument {
 
   async findDocument(token: string): Promise<QueryDocumentSnapshot<User>> {
     try {
-      
-
-      if (this.tokenVerificationService.verifyToken(token)) {
-        const uid = this.tokenVerificationService.getuid();
+      const uid = await this.tokenVerification.verifyToken(token);
+      if (uid) {
         const query = this.userCollection
           .withConverter(this.userConverter)
           .where("uid", "==", uid);
@@ -91,9 +87,11 @@ export class UserDocument {
 
   async findOne(token: string): Promise<User> {
     const doc = await this.findDocument(token);
+    if(!doc){
+      return;
+    }
     const user = doc.data() as User;
     // Iterating over the documents returned
-
     console.log("Usuário encontrado:", doc.id, user);
     return user;
   }
