@@ -5,7 +5,7 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from "@google-cloud/firestore";
-import { AuthService } from "src/firestore/auth.service";
+import { AuthService } from "src/firebase/auth.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserDocument {
@@ -58,9 +58,7 @@ export class UserDocument {
     try {
       const uid = await this.authService.verifyTokenAndReturnUid(token);
       if (uid) {
-        const query = this.userCollection
-          .withConverter(this.userConverter)
-          .where("uid", "==", uid);
+        const query = this.userCollection.withConverter(this.userConverter).where("uid", "==", uid);
         const snapshot = await query.get();
 
         if (snapshot.empty) {
@@ -77,7 +75,7 @@ export class UserDocument {
         return document;
       }
       else {
-        console.log("Token invalido")
+        console.log("Token inválido")
       }
     } catch (error) {
       console.log(error);
@@ -92,7 +90,7 @@ export class UserDocument {
     }
     const user = doc.data() as User;
     // Iterating over the documents returned
-    console.log("Usuário encontrado:", doc.id, user);
+    //console.log("Usuário encontrado:", doc.id, user);
     return user;
   }
 

@@ -4,7 +4,7 @@ import { UpdateShoplistDto } from "src/shoplists/dto/update-shoplist.dto";
 import { ShoplistDocument } from "src/shoplists/documents/shoplist.document";
 import { Shoplist } from "src/shoplists/entities/shoplist.entity";
 import { AddRecipeDto } from "./dto/add-recipe.dto";
-import { AuthService } from "src/firestore/auth.service";
+import { AuthService } from "src/firebase/auth.service";
 
 @Injectable()
 export class ShoplistsService {

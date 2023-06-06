@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import {AuthService} from '../firestore/auth.service';
+import {AuthService} from './auth.service';
 
 @Module({
   imports: [ConfigModule],
