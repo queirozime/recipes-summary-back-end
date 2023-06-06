@@ -29,8 +29,8 @@ export class UserDocument {
   constructor(
     @Inject(UserDocument.collectionName)
     private userCollection: CollectionReference<UserDocument>,
-    private firebaseService: Service
-  ) { this.tokenVerification = Service;}
+    private authService: AuthService
+  ) { this.authService = authService;}
 
   async create(user: User): Promise<User> {
     const snapshot = await this.userCollection
@@ -55,7 +55,7 @@ export class UserDocument {
 
   async findDocument(token: string): Promise<QueryDocumentSnapshot<User>> {
     try {
-      const uid = await this.tokenVerification.verifyToken(token);
+      const uid = await this.authService.verifyTokenAndReturnUid(token);
       if (uid) {
         const query = this.userCollection
           .withConverter(this.userConverter)
