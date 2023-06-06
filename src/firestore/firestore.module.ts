@@ -25,6 +25,7 @@ export class FirestoreModule {
       useFactory: (config) => new Firestore(config),
       inject: [FirestoreOptionsProvider],
     };
+    
     const collectionProviders = FirestoreCollectionProviders.map(providerName => ({
       provide: providerName,
       useFactory: (db) => db.collection(providerName),

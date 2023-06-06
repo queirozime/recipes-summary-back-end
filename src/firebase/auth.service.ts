@@ -13,7 +13,7 @@ export class AuthService {
       return false;
     }
   }
-
+  
   async getuid(tokenId: string): Promise<string> {
     const decodedToken = await auth().verifyIdToken(tokenId);
     return decodedToken.uid;
