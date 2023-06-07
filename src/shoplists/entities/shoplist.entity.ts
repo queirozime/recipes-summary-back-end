@@ -28,6 +28,10 @@ export class Shoplist {
     this.shoplistId = shoplistId;
   }
 
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
+  }
+
   setFavorite(state: boolean) {
     this.favorite = state;
   }

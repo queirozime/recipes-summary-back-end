@@ -1,5 +1,6 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
+import { UpdateShoplistDto } from "../dto/update-shoplist.dto";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import * as admin from 'firebase-admin';
 
@@ -92,13 +93,15 @@ export class ShoplistDocument {
     }
   }
 
-  async update(shoplist: Shoplist, id: string): Promise<Shoplist> {
+
+  async updatePortion(updateShoplistDto: UpdateShoplistDto, id: string): Promise<Shoplist> {
+    let shoplist = await this.findOne(id);
+    shoplist.setRecipes(updateShoplistDto.recipes)
     try {
-      const firestoreObject = this.shoplistConverter.toFirestore(shoplist);
       const snapshot = await this.shoplistCollection
         .withConverter(this.shoplistConverter)
         .doc('/' + id)
-        .update(firestoreObject);
+        .set(shoplist)
       return shoplist;
     }
     catch (error){
