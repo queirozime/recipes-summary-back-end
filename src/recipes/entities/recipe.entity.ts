@@ -59,7 +59,7 @@ export class Recipe {
   getInstructions(): string[] {
     return this.instructions;
   }
-  async createAcessibleUrl(storage:getStorage): Promise<string> {
+  async createAcessibleUrl(storage): Promise<string> {
   
     const filePath = this.imageUrl;
       if (filePath) {

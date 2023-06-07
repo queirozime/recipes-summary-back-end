@@ -41,29 +41,28 @@ export class RecipesService {
 
 
   async findFavorites(token: string): Promise<FavoriteRecipeDto[]>{
-    return this.favoriteDocument.findFavorites(token);
+    const dbRecipes = await this.favoriteDocument.findFavorites(token);
+    await Promise.all(dbRecipes.map(async (recipe: FavoriteRecipeDto) => {
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
+    })); 
+    return dbRecipes;
   }
 
   async findAll(): Promise<Recipe[]>{
     const dbRecipes = await this.recipeDocument.findAll();
     await Promise.all(dbRecipes.map(async (recipe: Recipe) => {
-      const filePath = recipe.getImageUrl();
-      if (filePath) {
-        const starsRef = ref(this.storage, filePath);
-  
-        try {
-          const url = await getDownloadURL(starsRef);
-          recipe.setImageUrl(url);
-        } catch (error) {
-          console.error("Erro ao obter a URL pública:", error);
-        }
-      }
-    }));
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
+    })); 
     return dbRecipes;
   }
 
   async findOne(id: string): Promise<Recipe> {
-   return this.recipeDocument.findOne(id);
+    const dbRecipe = await this.recipeDocument.findOne(id);
+    const url = await dbRecipe.createAcessibleUrl(this.storage);
+    dbRecipe.setImageUrl(url);
+   return dbRecipe;
   }
 
   async disfavor(token: string, recipeId: string) {
