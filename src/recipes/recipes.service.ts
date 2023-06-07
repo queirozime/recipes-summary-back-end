@@ -4,13 +4,28 @@ import { RecipeDocument } from './documents/recipes.document';
 import { Recipe } from './entities/recipe.entity';
 import { FavoriteRecipeDto } from './dto/favorite-recipe.dto';
 import { FavoriteDocument } from './documents/favorites.document';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { initializeApp } from 'firebase/app';
 
 @Injectable()
 export class RecipesService {
+  private storage;
   constructor(
     private recipeDocument: RecipeDocument,
     private favoriteDocument: FavoriteDocument
-    ) {}
+    ) {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBwG49qhxOhj4vm1p4zNwM3UGfhHEA2FM0",
+      authDomain: "cozinhex.firebaseapp.com",
+      projectId: "cozinhex",
+      storageBucket: "cozinhex.appspot.com",
+      messagingSenderId: "162587160055",
+      appId: "1:162587160055:web:4b73e462ffc8402d8952f2",
+      measurementId: "G-PRPZBWSNCD"
+      };
+      initializeApp(firebaseConfig);
+      this.storage = getStorage();
+    }
 
   async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
     const recipe = new Recipe(createRecipeDto.title, createRecipeDto.basePortion, 
@@ -30,7 +45,21 @@ export class RecipesService {
   }
 
   async findAll(): Promise<Recipe[]>{
-    return this.recipeDocument.findAll();
+    const dbRecipes = await this.recipeDocument.findAll();
+    await Promise.all(dbRecipes.map(async (recipe: Recipe) => {
+      const filePath = recipe.getImageUrl();
+      if (filePath) {
+        const starsRef = ref(this.storage, filePath);
+  
+        try {
+          const url = await getDownloadURL(starsRef);
+          recipe.setImageUrl(url);
+        } catch (error) {
+          console.error("Erro ao obter a URL pública:", error);
+        }
+      }
+    }));
+    return dbRecipes;
   }
 
   async findOne(id: string): Promise<Recipe> {

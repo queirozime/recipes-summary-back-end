@@ -1,4 +1,6 @@
 import { Ingredient } from "../../shoplists/interfaces/ingredient.interface";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+
 
 export class Recipe {
   private id: string;
@@ -56,6 +58,21 @@ export class Recipe {
 
   getInstructions(): string[] {
     return this.instructions;
+  }
+  async createAcessibleUrl(storage:getStorage): Promise<string> {
+  
+    const filePath = this.imageUrl;
+      if (filePath) {
+        const starsRef = ref(storage, filePath);
+  
+        try {
+          const url = await getDownloadURL(starsRef);
+          return url;
+        } catch (error) {
+          console.error("Erro ao obter a URL pública:", error);
+          return;
+        }
+      }
   }
 
 }
