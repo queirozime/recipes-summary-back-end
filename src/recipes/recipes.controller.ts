@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Request, Param, Delete } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 
@@ -11,6 +11,18 @@ export class RecipesController {
     return this.recipesService.create(createRecipeDto);
   }
 
+  @Post('favorite/:id')
+  favorite(@Param('id') recipeId: string, @Request() req) {
+    const token = req.headers.authorization;
+    return this.recipesService.favorite(token, recipeId);
+  }
+
+  @Get('favorite/all')
+  findFavorites(@Request() req) {
+    const token = req.headers.authorization;
+    return this.recipesService.findFavorites(token);
+  }
+
   @Get('all')
   findAll() {
     return this.recipesService.findAll();
@@ -21,8 +33,9 @@ export class RecipesController {
     return this.recipesService.findOne(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recipesService.remove(id);
+  @Delete('favorite/:id')
+  remove(@Param('id') id: string, @Request() req) {
+    const token = req.headers.authorization;
+    return this.recipesService.deleteFavorite(token, id);
   }
 }

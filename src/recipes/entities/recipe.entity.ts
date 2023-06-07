@@ -25,16 +25,20 @@ export class Recipe {
   setId(id: string) {
     this.id = id;
   }
-
+  
   setImageUrl(url: string) {
     this.imageUrl = url;
+  }
+
+  getId() {
+    return this.id;
   }
 
   getTitle(): string {
     return this.title;
   }
 
-  getBasePortion(): Number {
+  getBasePortion(): number {
     return this.basePortion;
   }
 
@@ -42,7 +46,7 @@ export class Recipe {
     return this.imageUrl;
   }
 
-  getPreparationTime(): Number {
+  getPreparationTime(): number {
     return this.preparationTime;
   }
 
