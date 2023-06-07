@@ -91,7 +91,7 @@ export class FavoriteDocument {
     }
   }
 
-  async deleteFavorite(token: string, recipeId: string) {
+  async disfavor(token: string, recipeId: string) {
     const userFavorites = await this.findFavorites(token);
     const selectedFavorite =  userFavorites.find( doc => doc.getRecipeId() == recipeId);
     try {

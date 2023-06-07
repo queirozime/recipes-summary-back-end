@@ -33,8 +33,8 @@ export class RecipesController {
     return this.recipesService.findOne(id);
   }
 
-  @Delete('favorite/:id')
-  remove(@Param('id') id: string, @Request() req) {
+  @Delete('disfavor/:id')
+  disfavor(@Param('id') id: string, @Request() req) {
     const token = req.headers.authorization;
     return this.recipesService.deleteFavorite(token, id);
   }

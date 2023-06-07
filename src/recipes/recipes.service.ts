@@ -37,7 +37,7 @@ export class RecipesService {
    return this.recipeDocument.findOne(id);
   }
 
-  async deleteFavorite(token: string, recipeId: string) {
-    return this.favoriteDocument.deleteFavorite(token, recipeId);
+  async disfavor(token: string, recipeId: string) {
+    return this.favoriteDocument.disfavor(token, recipeId);
   }
 }
