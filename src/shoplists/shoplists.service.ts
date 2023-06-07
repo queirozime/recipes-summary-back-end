@@ -43,14 +43,8 @@ export class ShoplistsService {
     return this.shoplistDocument.findOne(id);
   }
 
-  update(id: string, updateShoplistDto: UpdateShoplistDto) {
-    const shoplist = new Shoplist(
-      updateShoplistDto.userId, 
-      updateShoplistDto.title, 
-      updateShoplistDto.favorite, 
-      updateShoplistDto.recipes
-    );
-    return this.shoplistDocument.update(shoplist, id);
+  updatePortion(id: string, updateShoplistDto: UpdateShoplistDto) {
+    return this.shoplistDocument.updatePortion(updateShoplistDto, id);
   }
 
   remove(id: string) {
