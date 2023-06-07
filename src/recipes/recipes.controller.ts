@@ -17,22 +17,23 @@ export class RecipesController {
     return this.recipesService.favorite(token, recipeId);
   }
 
+  
+  @Get('all')
+  findAll() {
+    return this.recipesService.findAll();
+  }
+  
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.recipesService.findOne(id);
+  }
+  
   @Get('favorite/all')
   findFavorites(@Request() req) {
     const token = req.headers.authorization;
     return this.recipesService.findFavorites(token);
   }
-
-  @Get('all')
-  findAll() {
-    return this.recipesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recipesService.findOne(id);
-  }
-
+  
   @Delete('favorite/:id')
   remove(@Param('id') id: string, @Request() req) {
     const token = req.headers.authorization;

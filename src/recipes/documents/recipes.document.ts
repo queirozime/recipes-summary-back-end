@@ -31,31 +31,60 @@ export class RecipeDocument {
   ) {}
 
   async create(recipe: Recipe): Promise<Recipe> {
-    const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).add(recipe);
-    recipe.setId(snapshot.id);
-    return recipe;
+    try {
+      const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).add(recipe);
+      recipe.setId(snapshot.id);
+      return recipe;
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
   }
 
   async findAll(): Promise<Recipe[]> {
-    const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).get();
-    const recipes: Recipe[] = [];
-    snapshot.forEach(doc => {
-      let recipe = doc.data()
-      recipe.setId(doc.id)
-      recipes.push(recipe)
-    });
-    return recipes;
+    try {
+      const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).get();
+      const recipes: Recipe[] = [];
+      if(!snapshot.empty)
+        snapshot.forEach(doc => {
+          let recipe = doc.data();
+          recipe.setId(doc.id);
+          recipes.push(recipe);
+        });
+      return recipes;
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
   }
 
   async findOne(id: string): Promise<Recipe> {
-    const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).get();
-    let recipe = snapshot.data();
-    recipe.setId(snapshot.id)
-    return recipe;
+    try {
+      const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).get();
+      let recipe = snapshot.data();
+      if(recipe) {
+        recipe.setId(snapshot.id);
+        return recipe;
+      }
+      else return null;
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
   }
 
   async delete(id: string) {
-    await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).delete();
+    try {
+      const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).delete();
+      return snapshot;
+    }
+    catch(err) {
+      console.log(err);
+      return null;
+    }
   }
 }
 
