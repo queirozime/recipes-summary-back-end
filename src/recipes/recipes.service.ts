@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { RecipeDocument } from './documents/recipes.document';
 import { Recipe } from './entities/recipe.entity';
-import { AccessTokenDto } from './dto/access-token.dto';
 import { FavoriteRecipeDto } from './dto/favorite-recipe.dto';
 import { FavoriteDocument } from './documents/favorites.document';
 
@@ -20,14 +19,14 @@ export class RecipesService {
     return this.recipeDocument.create(recipe)
   }
 
-  async favorite(accessTokenDto: AccessTokenDto, recipeId: string): Promise<FavoriteRecipeDto> {
+  async favorite(token: string, recipeId: string): Promise<FavoriteRecipeDto> {
     const recipe = await this.findOne(recipeId)
-    return this.favoriteDocument.favorite(recipe, accessTokenDto.accessToken)
+    return this.favoriteDocument.favorite(recipe, token)
   }
 
 
-  async findFavorites(accessTokenDto: AccessTokenDto): Promise<FavoriteRecipeDto[]>{
-    return this.favoriteDocument.findFavorites(accessTokenDto.accessToken);
+  async findFavorites(token: string): Promise<FavoriteRecipeDto[]>{
+    return this.favoriteDocument.findFavorites(token);
   }
 
   async findAll(): Promise<Recipe[]>{
@@ -38,8 +37,7 @@ export class RecipesService {
    return this.recipeDocument.findOne(id);
   }
 
-  remove(id: string) {
-    this.recipeDocument.delete(id);
-    return `The recipe #${id} was removed successfully`;
+  async deleteFavorite(token: string, recipeId: string) {
+    return this.favoriteDocument.deleteFavorite(token, recipeId);
   }
 }

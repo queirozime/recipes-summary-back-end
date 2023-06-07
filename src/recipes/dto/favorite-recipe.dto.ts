@@ -1,4 +1,5 @@
 export class FavoriteRecipeDto {
+  id: string;
   recipeId: string;
   userId: string;
   title: string;
@@ -15,5 +16,17 @@ export class FavoriteRecipeDto {
     this.preparationTime = preparationTime;
     this.userId = userId;
     this.recipeId = recipeId;
+  }
+
+  setId(id: string ) {
+    this.id = id;
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getRecipeId() {
+    return this.recipeId;
   }
 }
