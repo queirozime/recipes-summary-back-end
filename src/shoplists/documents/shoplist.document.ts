@@ -44,6 +44,22 @@ export class ShoplistDocument {
     return shoplist;
   }
 
+  async changeFavorite(recipeId: string, state: boolean) {
+    try {
+      let shopList = await this.findOne(recipeId);
+      shopList.setFavorite(state);
+      const snapshot = await this.shoplistCollection
+        .withConverter(this.shoplistConverter)
+        .doc('/' + recipeId)
+        .set(shopList);
+      return snapshot;
+    }
+    catch(error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async findAll(token: string): Promise<Shoplist[]> {
     try{
       const decodedToken = await admin.auth().verifyIdToken(token);
@@ -60,9 +76,15 @@ export class ShoplistDocument {
   }
 
   async findOne(id: string): Promise<Shoplist> {
-    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
-    const shoplist = snapshot.data();
-    return shoplist;
+    try {
+      const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
+      const shoplist = snapshot.data();
+      return shoplist;
+    }
+    catch (error){
+      console.log(error);
+      return null;
+    }
   }
 
   async update(shoplist: Shoplist, id: string): Promise<Shoplist> {
@@ -72,7 +94,14 @@ export class ShoplistDocument {
   }
 
   async delete(id: string) {
-    await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).delete();
+    try {
+      const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).delete();
+      return snapshot;
+    }
+    catch (error){
+      console.log(error);
+      return null;
+    }
   }
 }
 

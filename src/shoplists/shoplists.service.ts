@@ -26,9 +26,14 @@ export class ShoplistsService {
     return this.shoplistDocument.create(shoplist);
   }
 
-  /*addRecipe(addRecipeDto: AddRecipeDto): Promise<Shoplist> {
-    return this.shoplistDocument.update(addRecipeDto);
-  }*/
+  async favorite(recipeId: string) {
+    return this.shoplistDocument.changeFavorite(recipeId, true);
+  }
+
+  async disfavor(recipeId: string) {
+    return this.shoplistDocument.changeFavorite(recipeId, false);
+  }
+
 
   findAll(token: string): Promise<Shoplist[]> {
     return this.shoplistDocument.findAll(token);
