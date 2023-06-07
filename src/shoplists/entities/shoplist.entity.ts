@@ -30,6 +30,8 @@ export class Shoplist {
 
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes;
+    this.updateLastAlterationDate();
+    this.setIngredients();
   }
 
   setFavorite(state: boolean) {
