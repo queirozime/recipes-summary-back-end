@@ -36,6 +36,6 @@ export class RecipesController {
   @Delete('disfavor/:id')
   disfavor(@Param('id') id: string, @Request() req) {
     const token = req.headers.authorization;
-    return this.recipesService.deleteFavorite(token, id);
+    return this.recipesService.disfavor(token, id);
   }
 }
