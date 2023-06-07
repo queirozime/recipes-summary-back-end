@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request } fro
 import { CreateShoplistDto } from 'src/shoplists/dto/create-shoplist.dto';
 import { UpdateShoplistDto } from 'src/shoplists/dto/update-shoplist.dto';
 import { ShoplistsService } from './shoplists.service';
-import { AddRecipeDto } from './dto/add-recipe.dto';
 
 @Controller('shoplists')
 export class ShoplistsController {

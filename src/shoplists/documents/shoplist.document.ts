@@ -3,6 +3,7 @@ import { Shoplist } from "../entities/shoplist.entity";
 import { UpdateShoplistDto } from "../dto/update-shoplist.dto";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import * as admin from 'firebase-admin';
+import { ResponseShoplistDto } from "../dto/response-shoplist.dto";
 
 @Injectable({scope: Scope.REQUEST})
 export class ShoplistDocument {
@@ -22,10 +23,10 @@ export class ShoplistDocument {
     fromFirestore(snapshot: QueryDocumentSnapshot): Shoplist {
       const data = snapshot.data();
       const shoplist = new Shoplist(
-        data.userId,
         data.title, 
         data.favorite, 
         data.recipes, 
+        data.userId,
         data.lastAlterationDate, 
         data.ingredients
       );
@@ -39,10 +40,11 @@ export class ShoplistDocument {
     private shoplistCollection: CollectionReference<ShoplistDocument>
   ) {}
 
-  async create(shoplist: Shoplist): Promise<Shoplist> {
+  async create(shoplist: Shoplist): Promise<ResponseShoplistDto> {
     const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).add(shoplist);
     shoplist.setShoplistId(snapshot.id);
-    return shoplist;
+    const responseShoplistDto = new ResponseShoplistDto(shoplist);
+    return responseShoplistDto;
   }
 
   async changeFavorite(recipeId: string, state: boolean) {
@@ -61,15 +63,16 @@ export class ShoplistDocument {
     }
   }
 
-  async findAll(token: string): Promise<Shoplist[]> {
+  async findAll(token: string): Promise<ResponseShoplistDto[]> {
     try{
       const decodedToken = await admin.auth().verifyIdToken(token);
       const uid = decodedToken.uid;
       const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
-      const shoplists: Shoplist[] = [];
-      if(!snapshot.empty)
-        snapshot.forEach(doc => shoplists.push(doc.data()));
-      return shoplists;
+      const responseShoplistDtoList: ResponseShoplistDto[] = [];
+      if(!snapshot.empty){
+        snapshot.forEach(doc => responseShoplistDtoList.push(new ResponseShoplistDto(doc.data())));
+      }
+      return responseShoplistDtoList;
     }
     catch (error){
       console.log(error);
@@ -94,7 +97,7 @@ export class ShoplistDocument {
   }
 
 
-  async updatePortion(updateShoplistDto: UpdateShoplistDto, id: string): Promise<Shoplist> {
+  async updatePortion(updateShoplistDto: UpdateShoplistDto, id: string): Promise<ResponseShoplistDto> {
     let shoplist = await this.findOne(id);
     shoplist.setRecipes(updateShoplistDto.recipes)
     try {
@@ -102,7 +105,8 @@ export class ShoplistDocument {
         .withConverter(this.shoplistConverter)
         .doc('/' + id)
         .set(shoplist)
-      return shoplist;
+      const responseShoplistDto = new ResponseShoplistDto(shoplist);
+      return responseShoplistDto;
     }
     catch (error){
       console.log(error);

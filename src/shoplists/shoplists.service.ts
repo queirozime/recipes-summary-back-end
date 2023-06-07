@@ -3,8 +3,8 @@ import { CreateShoplistDto } from "src/shoplists/dto/create-shoplist.dto";
 import { UpdateShoplistDto } from "src/shoplists/dto/update-shoplist.dto";
 import { ShoplistDocument } from "src/shoplists/documents/shoplist.document";
 import { Shoplist } from "src/shoplists/entities/shoplist.entity";
-import { AddRecipeDto } from "./dto/add-recipe.dto";
 import { AuthService } from "src/firebase/auth.service";
+import { ResponseShoplistDto } from "./dto/response-shoplist.dto";
 
 @Injectable()
 export class ShoplistsService {
@@ -13,15 +13,13 @@ export class ShoplistsService {
     private authService: AuthService
   ) {}
 
-  async create(createShoplistDto: CreateShoplistDto): Promise<Shoplist> {
-    const userId = await this.authService.verifyTokenAndReturnUid(
-      createShoplistDto.token
-    );
+  async create(createShoplistDto: CreateShoplistDto): Promise<ResponseShoplistDto> {
+    const userId = await this.authService.verifyTokenAndReturnUid(createShoplistDto.token);
     const shoplist = new Shoplist(
-      userId,
       createShoplistDto.title,
       createShoplistDto.favorite,
-      createShoplistDto.recipes
+      createShoplistDto.recipes,
+      userId
     );
     return this.shoplistDocument.create(shoplist);
   }
@@ -35,19 +33,21 @@ export class ShoplistsService {
   }
 
 
-  findAll(token: string): Promise<Shoplist[]> {
+  async findAll(token: string): Promise<ResponseShoplistDto[]> {
     return this.shoplistDocument.findAll(token);
   }
 
-  findOne(id: string): Promise<Shoplist> {
-    return this.shoplistDocument.findOne(id);
+  async findOne(id: string): Promise<ResponseShoplistDto> {
+    const shoplist = await this.shoplistDocument.findOne(id)
+    const responseShoplistDto = new ResponseShoplistDto(shoplist);
+    return responseShoplistDto;
   }
 
-  updatePortion(id: string, updateShoplistDto: UpdateShoplistDto) {
+  async updatePortion(id: string, updateShoplistDto: UpdateShoplistDto): Promise<ResponseShoplistDto> {
     return this.shoplistDocument.updatePortion(updateShoplistDto, id);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     this.shoplistDocument.delete(id);
     return `This action removes a #${id} shoplist`;
   }

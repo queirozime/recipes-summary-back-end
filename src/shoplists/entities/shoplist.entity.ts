@@ -1,6 +1,7 @@
 import { Recipe } from "../interfaces/recipe.interface";
 import { Ingredient } from "../interfaces/ingredient.interface";
 import { Timestamp } from "@google-cloud/firestore";
+import { ResponseShoplistDto } from "../dto/response-shoplist.dto";
 
 export class Shoplist {
   private userId: string;
@@ -12,10 +13,10 @@ export class Shoplist {
   private ingredients: Ingredient[];
 
   constructor(
-    userId: string, title: string, favorite: boolean, recipes: Recipe[], 
-    lastAlterationDate?: Timestamp, ingredients?: Ingredient[]
+    title: string, favorite: boolean, recipes: Recipe[], userId?: string,
+    lastAlterationDate?: Timestamp, ingredients?: Ingredient[] 
   ) {
-    this.userId = userId;
+    this.userId = userId ? userId : null ;
     this.title = title;
     this.favorite = favorite;
     this.lastAlterationDate = lastAlterationDate || this.updateLastAlterationDate();
@@ -36,6 +37,10 @@ export class Shoplist {
 
   setFavorite(state: boolean) {
     this.favorite = state;
+  }
+
+  getShoplistId(): string {
+    return this.shoplistId;
   }
 
   getUserId(): string {
