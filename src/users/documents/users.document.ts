@@ -42,16 +42,23 @@ export class UserDocument {
   }
 
   async findAll(): Promise<User[]> {
-    const snapshot = await this.userCollection
-      .withConverter(this.userConverter)
-      .get();
-    const users: User[] = [];
-    snapshot.forEach((doc) => {
-      let user = doc.data();
-      user.setUid(doc.id);
-      users.push(user);
-    });
-    return users;
+    try {
+      const snapshot = await this.userCollection
+        .withConverter(this.userConverter)
+        .get();
+      const users: User[] = [];
+      if(!snapshot.empty)
+        snapshot.forEach((doc) => {
+          let user = doc.data();
+          user.setUid(doc.id);
+          users.push(user);
+        });
+      return users;
+    }
+    catch(error) {
+      console.log(error);
+      return null;
+    }
   }
 
   async findDocument(token: string): Promise<QueryDocumentSnapshot<User>> {
@@ -77,7 +84,8 @@ export class UserDocument {
       else {
         console.log("Token inválido")
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.log(error);
       return null; // or return any default value as per your requirement
     }
@@ -91,15 +99,23 @@ export class UserDocument {
     const user = doc.data() as User;
     // Iterating over the documents returned
     //console.log("Usuário encontrado:", doc.id, user);
-    return user;
+    if(user)
+      return user;
+    else return null;
   }
 
   async delete(token: string) {
-    const doc = await this.findDocument(token);
-    await this.userCollection
-      .withConverter(this.userConverter)
-      .doc("/" + doc.id)
-      .delete();
-    return `The user #${doc.data().getUid()} was removed successfully`;
+    try {
+      const doc = await this.findDocument(token);
+      await this.userCollection
+        .withConverter(this.userConverter)
+        .doc("/" + doc.id)
+        .delete();
+      return `The user #${doc.data().getUid()} was removed successfully`;
+    }
+    catch (error) {
+      console.log(error);
+      return null; // or return any default value as per your requirement
+    }
   }
 }

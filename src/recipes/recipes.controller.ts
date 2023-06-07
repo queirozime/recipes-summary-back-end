@@ -17,20 +17,21 @@ export class RecipesController {
     return this.recipesService.favorite(token, recipeId);
   }
 
-  @Get('favorite/all')
-  findFavorites(@Request() req) {
-    const token = req.headers.authorization;
-    return this.recipesService.findFavorites(token);
-  }
-
+  
   @Get('all')
   findAll() {
     return this.recipesService.findAll();
   }
-
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.recipesService.findOne(id);
+  }
+  
+  @Get('favorite/all')
+  findFavorites(@Request() req) {
+    const token = req.headers.authorization;
+    return this.recipesService.findFavorites(token);
   }
 
   @Delete('disfavor/:id')

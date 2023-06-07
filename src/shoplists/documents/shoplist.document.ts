@@ -67,7 +67,8 @@ export class ShoplistDocument {
       const uid = decodedToken.uid;
       const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
       const shoplists: Shoplist[] = [];
-      snapshot.forEach(doc => shoplists.push(doc.data()));
+      if(!snapshot.empty)
+        snapshot.forEach(doc => shoplists.push(doc.data()));
       return shoplists;
     }
     catch (error){
@@ -80,13 +81,18 @@ export class ShoplistDocument {
     try {
       const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
       const shoplist = snapshot.data();
-      return shoplist;
+      if(shoplist) {
+        shoplist.setShoplistId(snapshot.id)
+        return shoplist;
+      }
+      else return null;
     }
     catch (error){
       console.log(error);
       return null;
     }
   }
+
 
   async updatePortion(updateShoplistDto: UpdateShoplistDto, id: string): Promise<Shoplist> {
     let shoplist = await this.findOne(id);

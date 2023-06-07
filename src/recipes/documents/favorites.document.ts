@@ -73,18 +73,18 @@ export class FavoriteDocument {
       if(uid) {
         const snapshot = await this.favoriteCollection.withConverter(this.favoriteConverter).where('userId', '==', uid).get();
         const favorites: FavoriteRecipeDto[] = [];
-        snapshot.forEach(doc => {
-          let favorite = doc.data();
-          favorite.setId(doc.id);
-          favorites.push(favorite);
-        });
+        if(!snapshot.empty)
+          snapshot.forEach(doc => {
+            let favorite = doc.data();
+            favorite.setId(doc.id);
+            favorites.push(favorite);
+          });
         return favorites;
       }
       else {
         console.log("Token inválido");
         return null;
       }
-
     }
     catch(error) {
       console.log(error);
