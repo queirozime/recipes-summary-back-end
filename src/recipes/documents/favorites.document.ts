@@ -42,6 +42,7 @@ export class FavoriteDocument {
 
   async favorite(recipe: Recipe, token: string): Promise<FavoriteRecipeDto> {
     try {
+      console.log("Token: " + token)
       const uid = await this.authService.verifyTokenAndReturnUid(token);
       if(uid) {
         const favorite = new FavoriteRecipeDto(
