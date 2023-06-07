@@ -13,10 +13,15 @@ export class ShoplistsController {
     return this.shoplistService.create(createShoplistDto);
   }
 
-  /*@Post('add')
-  addRecipe(@Body() addRecipeDto: AddRecipeDto) {
-    return this.shoplistService.addRecipe(addRecipeDto);
-  }*/
+  @Patch('favorite/:id')
+  favorite(@Param('id') recipeId: string) {
+    return this.shoplistService.favorite(recipeId);
+  }
+
+  @Patch('disfavor/:id')
+  disfavor(@Param('id') recipeId: string) {
+    return this.shoplistService.disfavor(recipeId);
+  }
 
   @Get()
   findAll(@Request() req) {
