@@ -36,8 +36,12 @@ export class ShoplistsService {
   }
 
 
-  async findAll(token: string): Promise<ResponseShoplistDto[]|string> {
-    return this.shoplistDocument.findAll(token);
+
+  async findAll(token: string): Promise<ResponseShoplistDto[]> {
+    const shoplists = await this.shoplistDocument.findAll(token);
+    const responseShoplistDtoList: ResponseShoplistDto[] = [];
+    shoplists.forEach( shoplist => responseShoplistDtoList.push(new ResponseShoplistDto(shoplist)))
+    return responseShoplistDtoList;
   }
 
   async findOne(id: string): Promise<ResponseShoplistDto> {

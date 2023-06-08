@@ -1,6 +1,7 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { Recipe } from "../entities/recipe.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import { ResponseRecipeDto } from "../dto/response-recipe.dto";
 
 @Injectable({scope: Scope.REQUEST})
 export class RecipeDocument {
@@ -30,11 +31,12 @@ export class RecipeDocument {
     private recipeCollection: CollectionReference<RecipeDocument>
   ) {}
 
-  async create(recipe: Recipe): Promise<Recipe> {
+  async create(recipe: Recipe): Promise<ResponseRecipeDto> {
     try {
       const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).add(recipe);
       recipe.setId(snapshot.id);
-      return recipe;
+      const responseRecipeDto = new ResponseRecipeDto(recipe);
+      return responseRecipeDto;
     }
     catch(err) {
       console.log(err);
@@ -66,7 +68,7 @@ export class RecipeDocument {
       let recipe = snapshot.data();
       if(recipe) {
         recipe.setId(snapshot.id);
-        return recipe;
+        return recipe;        
       }
       else return null;
     }
