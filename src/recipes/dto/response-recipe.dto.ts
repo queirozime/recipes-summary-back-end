@@ -19,5 +19,6 @@ export class ResponseRecipeDto {
     this.ingredients = recipe.getIngredients();
     this.instructions = recipe.getInstructions();
     this.favorite = false;
+    this.id = recipe.getId()
   }
 }

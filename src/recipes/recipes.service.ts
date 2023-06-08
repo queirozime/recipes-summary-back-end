@@ -62,7 +62,8 @@ export class RecipesService {
       const url = await recipe.createAcessibleUrl(this.storage);
       recipe.setImageUrl(url);
       const responseRecipeDto = new ResponseRecipeDto(recipe);
-      if(!!favorites && favorites.some( favorite => recipe.getId == favorite.getRecipeId))
+      if(!!favorites && favorites.some( favorite => {
+        return recipe.getId() == favorite.getRecipeId()}))
         responseRecipeDto.favorite = true;
       responseRecipeDtoList.push(responseRecipeDto);
     })); 
@@ -71,10 +72,13 @@ export class RecipesService {
 
   async findOne(id: string): Promise<ResponseRecipeDto> {
     const recipe = await this.recipeDocument.findOne(id);
-    const url = await recipe.createAcessibleUrl(this.storage);
-    recipe.setImageUrl(url);
-    const responseRecipeDto = new ResponseRecipeDto(recipe)
-    return responseRecipeDto;
+    if(!!recipe) {
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
+      const responseRecipeDto = new ResponseRecipeDto(recipe)
+      return responseRecipeDto;
+    }
+    else return null;
   }
 
   async disfavor(token: string, recipeId: string) {

@@ -95,15 +95,23 @@ export class FavoriteDocument {
   async disfavor(token: string, recipeId: string) {
     const userFavorites = await this.findFavorites(token);
     if(userFavorites.length != 0) {
-      const selectedFavorite =  userFavorites.find( doc => doc.getRecipeId() == recipeId);
-      try {
-        await this.favoriteCollection.withConverter(this.favoriteConverter).doc('/' + selectedFavorite.getId()).delete();
-        return true;
+      const selectedFavorite =  userFavorites.find( doc => { 
+        return doc.getRecipeId() == recipeId});
+      if(selectedFavorite) {
+        try {
+          await this.favoriteCollection
+            .withConverter(this.favoriteConverter)
+            .doc('/' + selectedFavorite
+            .getId())
+            .delete();
+          return true;
+        }
+        catch(error) {
+          console.log(error);
+          return null; // or return any default value as per your requirement
+        }
       }
-      catch(error) {
-        console.log(error);
-        return null; // or return any default value as per your requirement
-      }
+      else return null
     }
     else return null;
   }
