@@ -101,7 +101,7 @@ export class ShoplistDocument {
     let shoplist = await this.findOne(id);
     shoplist.setRecipes(updateShoplistDto.recipes)
     try {
-      const snapshot = await this.shoplistCollection
+       await this.shoplistCollection
         .withConverter(this.shoplistConverter)
         .doc('/' + id)
         .set(shoplist)
