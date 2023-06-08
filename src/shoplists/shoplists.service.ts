@@ -13,15 +13,18 @@ export class ShoplistsService {
     private authService: AuthService
   ) {}
 
-  async create(createShoplistDto: CreateShoplistDto): Promise<ResponseShoplistDto> {
+  async create(createShoplistDto: CreateShoplistDto): Promise<ResponseShoplistDto|string> {
     const userId = await this.authService.verifyTokenAndReturnUid(createShoplistDto.token);
-    const shoplist = new Shoplist(
-      createShoplistDto.title,
-      createShoplistDto.favorite,
-      createShoplistDto.recipes,
-      userId
-    );
-    return this.shoplistDocument.create(shoplist);
+    if(!!userId){
+      const shoplist = new Shoplist(
+        createShoplistDto.title,
+        createShoplistDto.favorite,
+        createShoplistDto.recipes,
+        userId
+      );
+      return this.shoplistDocument.create(shoplist);
+    }
+      return 'Token invalido';
   }
 
   async favorite(recipeId: string) {
@@ -31,6 +34,7 @@ export class ShoplistsService {
   async disfavor(recipeId: string) {
     return this.shoplistDocument.changeFavorite(recipeId, false);
   }
+
 
 
   async findAll(token: string): Promise<ResponseShoplistDto[]> {
