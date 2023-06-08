@@ -1,3 +1,5 @@
+import { getDownloadURL, ref } from "firebase/storage";
+
 export class FavoriteRecipeDto {
   id: string;
   recipeId: string;
@@ -35,4 +37,23 @@ export class FavoriteRecipeDto {
   getRecipeId() {
     return this.recipeId;
   }
+  setImageUrl(url:string){
+    this.imageUrl = url;
+  }
+  async createAcessibleUrl(storage): Promise<string> {
+  
+    const filePath = this.imageUrl;
+      if (filePath) {
+        const starsRef = ref(storage, filePath);
+  
+        try {
+          const url = await getDownloadURL(starsRef);
+          return url;
+        } catch (error) {
+          console.error("Erro ao obter a URL pública:", error);
+          return;
+        }
+      }
+  }
+
 }

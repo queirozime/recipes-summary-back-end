@@ -5,13 +5,28 @@ import { Recipe } from './entities/recipe.entity';
 import { FavoriteRecipeDto } from './dto/favorite-recipe.dto';
 import { FavoriteDocument } from './documents/favorites.document';
 import { ResponseRecipeDto } from './dto/response-recipe.dto';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { initializeApp } from 'firebase/app';
 
 @Injectable()
 export class RecipesService {
+  private storage;
   constructor(
     private recipeDocument: RecipeDocument,
     private favoriteDocument: FavoriteDocument
-    ) {}
+    ) {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBwG49qhxOhj4vm1p4zNwM3UGfhHEA2FM0",
+      authDomain: "cozinhex.firebaseapp.com",
+      projectId: "cozinhex",
+      storageBucket: "cozinhex.appspot.com",
+      messagingSenderId: "162587160055",
+      appId: "1:162587160055:web:4b73e462ffc8402d8952f2",
+      measurementId: "G-PRPZBWSNCD"
+      };
+      initializeApp(firebaseConfig);
+      this.storage = getStorage();
+    }
 
   async create(createRecipeDto: CreateRecipeDto): Promise<ResponseRecipeDto> {
     const recipe = new Recipe(
@@ -31,24 +46,33 @@ export class RecipesService {
 
 
   async findFavorites(token: string): Promise<FavoriteRecipeDto[]>{
-    return this.favoriteDocument.findFavorites(token);
+    const dbRecipes = await this.favoriteDocument.findFavorites(token);
+    await Promise.all(dbRecipes.map(async (recipe: FavoriteRecipeDto) => {
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
+    })); 
+    return dbRecipes;
   }
 
   async findAll(token: string): Promise<ResponseRecipeDto[]>{
     const recipes = await this.recipeDocument.findAll();
     const favorites = await this.favoriteDocument.findFavorites(token);
     const responseRecipeDtoList: ResponseRecipeDto[] = [];
-    recipes.forEach( recipe => {
+    await Promise.all(recipes.map(async (recipe: Recipe) => {
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
       const responseRecipeDto = new ResponseRecipeDto(recipe);
       if(!!favorites && favorites.some( favorite => recipe.getId == favorite.getRecipeId))
         responseRecipeDto.favorite = true;
-      return responseRecipeDtoList.push(responseRecipeDto)
-    })
+      responseRecipeDtoList.push(responseRecipeDto);
+    })); 
     return responseRecipeDtoList;
   }
 
   async findOne(id: string): Promise<ResponseRecipeDto> {
     const recipe = await this.recipeDocument.findOne(id);
+    const url = await recipe.createAcessibleUrl(this.storage);
+    recipe.setImageUrl(url);
     const responseRecipeDto = new ResponseRecipeDto(recipe)
     return responseRecipeDto;
   }
