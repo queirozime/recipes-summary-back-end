@@ -40,7 +40,7 @@ export class RecipesService {
     const responseRecipeDtoList: ResponseRecipeDto[] = [];
     recipes.forEach( recipe => {
       const responseRecipeDto = new ResponseRecipeDto(recipe);
-      if(favorites.some( favorite => recipe.getId == favorite.getRecipeId))
+      if(!!favorites && favorites.some( favorite => recipe.getId == favorite.getRecipeId))
         responseRecipeDto.favorite = true;
       return responseRecipeDtoList.push(responseRecipeDto)
     })

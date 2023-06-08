@@ -20,6 +20,7 @@ export class RecipesController {
   @Get('all')
   findAll(@Request() req) {
     const token = req.headers.authorization;
+    console.log(token)
     return this.recipesService.findAll(token);
   }
   
