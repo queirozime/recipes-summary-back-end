@@ -17,10 +17,10 @@ export class RecipesController {
     return this.recipesService.favorite(token, recipeId);
   }
 
-  
   @Get('all')
-  findAll() {
-    return this.recipesService.findAll();
+  findAll(@Request() req) {
+    const token = req.headers.authorization;
+    return this.recipesService.findAll(token);
   }
   
   @Get(':id')

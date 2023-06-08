@@ -4,6 +4,7 @@ import { CollectionReference, DocumentData, QueryDocumentSnapshot, Firestore } f
 import { FavoriteRecipeDto } from "../dto/favorite-recipe.dto";
 import { AuthService } from "src/firebase/auth.service";
 import * as admin from  'firebase-admin'
+import { ResponseRecipeDto } from "../dto/response-recipe.dto";
 
 @Injectable({scope: Scope.REQUEST})
 export class FavoriteDocument {
@@ -40,18 +41,17 @@ export class FavoriteDocument {
     private authService: AuthService
   ) { this.authService = authService;}
 
-  async favorite(recipe: Recipe, token: string): Promise<FavoriteRecipeDto> {
+  async favorite(token: string, responseRecipeDto: ResponseRecipeDto ): Promise<FavoriteRecipeDto> {
     try {
-      console.log("Token: " + token)
       const uid = await this.authService.verifyTokenAndReturnUid(token);
       if(uid) {
         const favorite = new FavoriteRecipeDto(
-          recipe.getTitle(),
-          recipe.getBasePortion(),
-          recipe.getPreparationTime(),
-          recipe.getImageUrl(),
-          recipe.getId(),
-          uid
+          responseRecipeDto.title,
+          responseRecipeDto.basePortion,
+          responseRecipeDto.preparationTime,
+          responseRecipeDto.imageUrl,
+          responseRecipeDto.id,
+          uid,
           );
         await this.favoriteCollection.withConverter(this.favoriteConverter).add(favorite);
         return favorite;
@@ -94,15 +94,18 @@ export class FavoriteDocument {
 
   async disfavor(token: string, recipeId: string) {
     const userFavorites = await this.findFavorites(token);
-    const selectedFavorite =  userFavorites.find( doc => doc.getRecipeId() == recipeId);
-    try {
-      await this.favoriteCollection.withConverter(this.favoriteConverter).doc('/' + selectedFavorite.getId()).delete();
-      return true;
+    if(userFavorites.length != 0) {
+      const selectedFavorite =  userFavorites.find( doc => doc.getRecipeId() == recipeId);
+      try {
+        await this.favoriteCollection.withConverter(this.favoriteConverter).doc('/' + selectedFavorite.getId()).delete();
+        return true;
+      }
+      catch(error) {
+        console.log(error);
+        return null; // or return any default value as per your requirement
+      }
     }
-    catch(error) {
-      console.log(error);
-      return null; // or return any default value as per your requirement
-    }
+    else return null;
   }
 }
 
