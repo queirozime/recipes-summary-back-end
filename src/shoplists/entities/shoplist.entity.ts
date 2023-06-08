@@ -31,8 +31,8 @@ export class Shoplist {
 
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes;
-    this.updateLastAlterationDate();
-    this.setIngredients();
+    this.lastAlterationDate= this.updateLastAlterationDate();
+    this.ingredients=this.setIngredients();
   }
 
   setFavorite(state: boolean) {
@@ -93,7 +93,6 @@ export class Shoplist {
       if (index !== -1) shoplist[index].qty += element.qty;
       else shoplist.push(element);
     });
-
     return shoplist;
   }
 }
