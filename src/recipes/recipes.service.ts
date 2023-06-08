@@ -4,6 +4,7 @@ import { RecipeDocument } from './documents/recipes.document';
 import { Recipe } from './entities/recipe.entity';
 import { FavoriteRecipeDto } from './dto/favorite-recipe.dto';
 import { FavoriteDocument } from './documents/favorites.document';
+import { ResponseRecipeDto } from './dto/response-recipe.dto';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { initializeApp } from 'firebase/app';
 
@@ -27,16 +28,20 @@ export class RecipesService {
       this.storage = getStorage();
     }
 
-  async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
-    const recipe = new Recipe(createRecipeDto.title, createRecipeDto.basePortion, 
-      createRecipeDto.ingredients, createRecipeDto.instructions, 
-      createRecipeDto.preparationTime, createRecipeDto.imageUrl)
+  async create(createRecipeDto: CreateRecipeDto): Promise<ResponseRecipeDto> {
+    const recipe = new Recipe(
+      createRecipeDto.title, 
+      createRecipeDto.basePortion, 
+      createRecipeDto.ingredients, 
+      createRecipeDto.instructions, 
+      createRecipeDto.preparationTime, 
+      createRecipeDto.imageUrl)
     return this.recipeDocument.create(recipe)
   }
 
   async favorite(token: string, recipeId: string): Promise<FavoriteRecipeDto> {
     const recipe = await this.findOne(recipeId)
-    return this.favoriteDocument.favorite(recipe, token)
+    return this.favoriteDocument.favorite(token, recipe)
   }
 
 
@@ -49,20 +54,31 @@ export class RecipesService {
     return dbRecipes;
   }
 
-  async findAll(): Promise<Recipe[]>{
-    const dbRecipes = await this.recipeDocument.findAll();
-    await Promise.all(dbRecipes.map(async (recipe: Recipe) => {
+  async findAll(token: string): Promise<ResponseRecipeDto[]>{
+    const recipes = await this.recipeDocument.findAll();
+    const favorites = await this.favoriteDocument.findFavorites(token);
+    const responseRecipeDtoList: ResponseRecipeDto[] = [];
+    await Promise.all(recipes.map(async (recipe: Recipe) => {
       const url = await recipe.createAcessibleUrl(this.storage);
       recipe.setImageUrl(url);
+      const responseRecipeDto = new ResponseRecipeDto(recipe);
+      if(!!favorites && favorites.some( favorite => {
+        return recipe.getId() == favorite.getRecipeId()}))
+        responseRecipeDto.favorite = true;
+      responseRecipeDtoList.push(responseRecipeDto);
     })); 
-    return dbRecipes;
+    return responseRecipeDtoList;
   }
 
-  async findOne(id: string): Promise<Recipe> {
-    const dbRecipe = await this.recipeDocument.findOne(id);
-    const url = await dbRecipe.createAcessibleUrl(this.storage);
-    dbRecipe.setImageUrl(url);
-   return dbRecipe;
+  async findOne(id: string): Promise<ResponseRecipeDto> {
+    const recipe = await this.recipeDocument.findOne(id);
+    if(!!recipe) {
+      const url = await recipe.createAcessibleUrl(this.storage);
+      recipe.setImageUrl(url);
+      const responseRecipeDto = new ResponseRecipeDto(recipe)
+      return responseRecipeDto;
+    }
+    else return null;
   }
 
   async disfavor(token: string, recipeId: string) {

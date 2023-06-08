@@ -4,6 +4,7 @@ import { UpdateShoplistDto } from "../dto/update-shoplist.dto";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import * as admin from 'firebase-admin';
 import { ResponseShoplistDto } from "../dto/response-shoplist.dto";
+import { Recipe } from "src/recipes/entities/recipe.entity";
 
 @Injectable({scope: Scope.REQUEST})
 export class ShoplistDocument {
@@ -63,16 +64,20 @@ export class ShoplistDocument {
     }
   }
 
-  async findAll(token: string): Promise<ResponseShoplistDto[]> {
+  async findAll(token: string): Promise<Shoplist[]> {
     try{
       const decodedToken = await admin.auth().verifyIdToken(token);
       const uid = decodedToken.uid;
       const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
-      const responseShoplistDtoList: ResponseShoplistDto[] = [];
+      const shoplists: Shoplist[] = [];
       if(!snapshot.empty){
-        snapshot.forEach(doc => responseShoplistDtoList.push(new ResponseShoplistDto(doc.data())));
+        snapshot.forEach(doc => {
+          let shoplist = doc.data()
+          shoplist.setShoplistId(doc.id)
+          shoplists.push(shoplist)
+        });
       }
-      return responseShoplistDtoList;
+      return shoplists;
     }
     catch (error){
       console.log(error);
