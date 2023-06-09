@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, Scope, NotFoundException } from "@nestjs/common";
 import { Recipe } from "../entities/recipe.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import { ResponseRecipeDto } from "../dto/response-recipe.dto";
@@ -63,19 +63,13 @@ export class RecipeDocument {
   }
 
   async findOne(id: string): Promise<Recipe> {
-    try {
       const snapshot = await this.recipeCollection.withConverter(this.recipeConverter).doc('/' + id).get();
       let recipe = snapshot.data();
       if(recipe) {
         recipe.setId(snapshot.id);
         return recipe;        
       }
-      else return null;
-    }
-    catch(err) {
-      console.log(err);
-      return null;
-    }
+      else throw new NotFoundException ("Receita não encontrada");    
   }
 
   async delete(id: string) {
