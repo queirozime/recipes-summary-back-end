@@ -17,12 +17,12 @@ export class RecipesService {
     ) {
       const firebaseConfig = {
         apiKey: "AIzaSyBwG49qhxOhj4vm1p4zNwM3UGfhHEA2FM0",
-      authDomain: "cozinhex.firebaseapp.com",
-      projectId: "cozinhex",
-      storageBucket: "cozinhex.appspot.com",
-      messagingSenderId: "162587160055",
-      appId: "1:162587160055:web:4b73e462ffc8402d8952f2",
-      measurementId: "G-PRPZBWSNCD"
+        authDomain: "cozinhex.firebaseapp.com",
+        projectId: "cozinhex",
+        storageBucket: "cozinhex.appspot.com",
+        messagingSenderId: "162587160055",
+        appId: "1:162587160055:web:4b73e462ffc8402d8952f2",
+        measurementId: "G-PRPZBWSNCD"
       };
       initializeApp(firebaseConfig);
       this.storage = getStorage();
@@ -56,17 +56,26 @@ export class RecipesService {
 
   async findAll(token: string): Promise<ResponseRecipeDto[]>{
     const recipes = await this.recipeDocument.findAll();
-    const favorites = await this.favoriteDocument.findFavorites(token);
     const responseRecipeDtoList: ResponseRecipeDto[] = [];
-    await Promise.all(recipes.map(async (recipe: Recipe) => {
-      const url = await recipe.createAcessibleUrl(this.storage);
-      recipe.setImageUrl(url);
-      const responseRecipeDto = new ResponseRecipeDto(recipe);
-      if(!!favorites && favorites.some( favorite => {
-        return recipe.getId() == favorite.getRecipeId()}))
-        responseRecipeDto.favorite = true;
-      responseRecipeDtoList.push(responseRecipeDto);
-    })); 
+    if(!token) {
+      const favorites = await this.favoriteDocument.findFavorites(token);
+      await Promise.all(recipes.map(async (recipe: Recipe) => {
+        const url = await recipe.createAcessibleUrl(this.storage);
+        recipe.setImageUrl(url);
+        const responseRecipeDto = new ResponseRecipeDto(recipe);
+        if(!!favorites && favorites.some( favorite => {
+          return recipe.getId() == favorite.getRecipeId()}))
+          responseRecipeDto.favorite = true;
+        responseRecipeDtoList.push(responseRecipeDto);
+      })); 
+    }
+    else {
+      await Promise.all(recipes.map(async (recipe: Recipe) => {
+        const url = await recipe.createAcessibleUrl(this.storage);
+        recipe.setImageUrl(url);
+        responseRecipeDtoList.push(new ResponseRecipeDto(recipe));
+      })); 
+    }
     return responseRecipeDtoList;
   }
 

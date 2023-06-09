@@ -7,13 +7,12 @@ import * as admin from "firebase-admin";
 @Injectable()
 export class UsersService {
   constructor(private userDocument: UserDocument) {}
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto, token: string): Promise<User> {
     const user = new User(
       createUserDto.name,
       createUserDto.email,
-      createUserDto.password
     );
-    return this.userDocument.create(user);
+    return this.userDocument.create(user, token);
   }
 
   async findAll(): Promise<User[]> {
@@ -21,7 +20,7 @@ export class UsersService {
   }
 
   async findOne(token: string): Promise<User> {
-    return this.userDocument.findOne(token);
+    return await this.userDocument.findOne(token);
   }
 
   async remove(token: string) {

@@ -59,6 +59,7 @@ export class FavoriteDocument {
   }
 
   async findFavorites(token: string): Promise<FavoriteRecipeDto[]> {  
+<<<<<<< HEAD
       const uid = await this.authService.verifyTokenAndReturnUid(token);
       if(uid) {
         const snapshot = await this.favoriteCollection.withConverter(this.favoriteConverter).where('userId', '==', uid).get();
@@ -73,6 +74,22 @@ export class FavoriteDocument {
         
       }
       else throw new NotFoundException("Token não válido");
+=======
+    const uid = await this.authService.verifyTokenAndReturnUid(token);
+    if(uid) {
+      const snapshot = await this.favoriteCollection.withConverter(this.favoriteConverter).where('userId', '==', uid).get();
+      const favorites: FavoriteRecipeDto[] = [];
+      if(!snapshot.empty)
+        snapshot.forEach(doc => {
+          let favorite = doc.data();
+          favorite.setId(doc.id);
+          favorites.push(favorite);
+        });
+      return favorites;
+    }
+    else throw new BadRequestException("Token não válido");
+   
+>>>>>>> main
   }
 
   async disfavor(token: string, recipeId: string) {

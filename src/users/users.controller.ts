@@ -7,8 +7,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto, @Request() req) {
+    const token = req.headers.authorization;
+    return this.usersService.create(createUserDto, token);
   }
 
   @Get("all")

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateShoplistDto } from "src/shoplists/dto/create-shoplist.dto";
 import { UpdateShoplistDto } from "src/shoplists/dto/update-shoplist.dto";
 import { ShoplistDocument } from "src/shoplists/documents/shoplist.document";
@@ -24,7 +24,7 @@ export class ShoplistsService {
       );
       return this.shoplistDocument.create(shoplist);
     }
-      return 'Token invalido';
+    else throw new BadRequestException("Token não válido");
   }
 
   async favorite(recipeId: string) {
@@ -34,8 +34,6 @@ export class ShoplistsService {
   async disfavor(recipeId: string) {
     return this.shoplistDocument.changeFavorite(recipeId, false);
   }
-
-
 
   async findAll(token: string): Promise<ResponseShoplistDto[]> {
     const shoplists = await this.shoplistDocument.findAll(token);
@@ -55,7 +53,7 @@ export class ShoplistsService {
   }
 
   async remove(id: string) {
-    this.shoplistDocument.delete(id);
-    return `This action removes a #${id} shoplist`;
+    await this.shoplistDocument.delete(id);
+    return `List ${id} deletada`;
   }
 }
