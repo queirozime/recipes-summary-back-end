@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { RecipeDocument } from './documents/recipes.document';
 import { Recipe } from './entities/recipe.entity';
@@ -87,7 +87,7 @@ export class RecipesService {
       const responseRecipeDto = new ResponseRecipeDto(recipe)
       return responseRecipeDto;
     }
-    else return null;
+    else throw new BadRequestException ("Receita não encontrada");
   }
 
   async disfavor(token: string, recipeId: string) {

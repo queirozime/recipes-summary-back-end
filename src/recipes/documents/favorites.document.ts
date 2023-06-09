@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, Scope, BadRequestException, NotFoundException } from "@nestjs/common";
 import { Recipe } from "../entities/recipe.entity";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot, Firestore } from "@google-cloud/firestore";
 import { FavoriteRecipeDto } from "../dto/favorite-recipe.dto";
@@ -42,7 +42,6 @@ export class FavoriteDocument {
   ) { this.authService = authService;}
 
   async favorite(token: string, responseRecipeDto: ResponseRecipeDto ): Promise<FavoriteRecipeDto> {
-    try {
       const uid = await this.authService.verifyTokenAndReturnUid(token);
       if(uid) {
         const favorite = new FavoriteRecipeDto(
@@ -56,15 +55,7 @@ export class FavoriteDocument {
         await this.favoriteCollection.withConverter(this.favoriteConverter).add(favorite);
         return favorite;
       }
-      else {
-        console.log("Token inválido");
-        return null;
-      }
-    }
-    catch (error) {
-      console.log(error);
-      return null; // or return any default value as per your requirement
-    }
+      else throw new BadRequestException ("Token não válido");    
   }
 
   async findFavorites(token: string): Promise<FavoriteRecipeDto[]> {  
