@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { User } from "../entities/user.entity";
 import {
   CollectionReference,
@@ -33,12 +33,16 @@ export class UserDocument {
     private authService: AuthService
   ) { this.authService = authService;}
 
-  async create(user: User): Promise<User> {
-    const snapshot = await this.userCollection
-      .withConverter(this.userConverter)
-      .add(user);
-    user.setUid(snapshot.id);
-    return user;
+  async create(user: User, token: string): Promise<User> {
+    const uid = await this.authService.verifyTokenAndReturnUid(token);
+    if(uid) {
+      user.setUid(uid);
+      await this.userCollection
+        .withConverter(this.userConverter)
+        .add(user);
+      return user;
+    }
+    else throw new BadRequestException("Token não válido"); 
   }
 
   async findAll(): Promise<User[]> {
@@ -62,33 +66,22 @@ export class UserDocument {
   }
 
   async findDocument(token: string): Promise<QueryDocumentSnapshot<User>> {
-    try {
-      const uid = await this.authService.verifyTokenAndReturnUid(token);
-      if (uid) {
-        const query = this.userCollection.withConverter(this.userConverter).where("uid", "==", uid);
-        const snapshot = await query.get();
+    const uid = await this.authService.verifyTokenAndReturnUid(token);
+    if (uid) {
+      const query = this.userCollection.withConverter(this.userConverter).where("uid", "==", uid);
+      const snapshot = await query.get();
 
-        if (snapshot.empty) {
-          console.log("Nenhum usuário encontrado com esse UID.");
-          return null;
-        }
+      if (snapshot.empty)
+        throw new NotFoundException("Nenhum usuário encontrado com esse UID."); 
 
-        let document: QueryDocumentSnapshot<User> = null;
+      let document: QueryDocumentSnapshot<User> = null;
 
-        // Iterating over the documents returned
-        snapshot.forEach((doc) => {
-          document = doc;
-        });
-        return document;
-      }
-      else {
-        console.log("Token inválido")
-      }
-    } 
-    catch (error) {
-      console.log(error);
-      return null; // or return any default value as per your requirement
+      snapshot.forEach((doc) => {
+        document = doc;
+      });
+      return document;
     }
+    else throw new BadRequestException("Token não válido"); 
   }
 
   async findOne(token: string): Promise<User> {
@@ -97,25 +90,17 @@ export class UserDocument {
       return;
     }
     const user = doc.data() as User;
-    // Iterating over the documents returned
-    //console.log("Usuário encontrado:", doc.id, user);
     if(user)
       return user;
     else return null;
   }
 
   async delete(token: string) {
-    try {
-      const doc = await this.findDocument(token);
-      await this.userCollection
-        .withConverter(this.userConverter)
-        .doc("/" + doc.id)
-        .delete();
-      return `The user #${doc.data().getUid()} was removed successfully`;
-    }
-    catch (error) {
-      console.log(error);
-      return null; // or return any default value as per your requirement
-    }
+    const doc = await this.findDocument(token);
+    await this.userCollection
+      .withConverter(this.userConverter)
+      .doc("/" + doc.id)
+      .delete();
+    return `The user #${doc.data().getUid()} was removed successfully`;
   }
 }
