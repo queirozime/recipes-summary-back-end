@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { Shoplist } from "../entities/shoplist.entity";
 import { UpdateShoplistDto } from "../dto/update-shoplist.dto";
 import { CollectionReference, DocumentData, QueryDocumentSnapshot } from "@google-cloud/firestore";
@@ -68,16 +68,19 @@ export class ShoplistDocument {
     try{
       const decodedToken = await admin.auth().verifyIdToken(token);
       const uid = decodedToken.uid;
-      const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
-      const shoplists: Shoplist[] = [];
-      if(!snapshot.empty){
-        snapshot.forEach(doc => {
-          let shoplist = doc.data()
-          shoplist.setShoplistId(doc.id)
-          shoplists.push(shoplist)
-        });
+      if(uid) {
+        const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).where('userId','==', uid).get();
+        const shoplists: Shoplist[] = [];
+        if(!snapshot.empty){
+          snapshot.forEach(doc => {
+            let shoplist = doc.data()
+            shoplist.setShoplistId(doc.id)
+            shoplists.push(shoplist)
+          });
+        }
+        return shoplists;
       }
-      return shoplists;
+      else throw new BadRequestException("Token não válido");
     }
     catch (error){
       console.log(error);
@@ -86,19 +89,13 @@ export class ShoplistDocument {
   }
 
   async findOne(id: string): Promise<Shoplist> {
-    try {
       const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
-      const shoplist = snapshot.data();
-      if(shoplist) {
+      if(snapshot.exists) {
+        const shoplist = snapshot.data();
         shoplist.setShoplistId(snapshot.id)
         return shoplist;
       }
-      else return null;
-    }
-    catch (error){
-      console.log(error);
-      return null;
-    }
+      else throw new NotFoundException("Lista não encontrada");
   }
 
 
@@ -120,14 +117,10 @@ export class ShoplistDocument {
   }
 
   async delete(id: string) {
-    try {
-      const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).delete();
-      return snapshot;
-    }
-    catch (error){
-      console.log(error);
-      return null;
-    }
+    const snapshot = await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).get();
+    if(snapshot.exists)
+      await this.shoplistCollection.withConverter(this.shoplistConverter).doc('/' + id).delete();
+    else throw new NotFoundException("Lista não encontrada");
   }
 }
 
